@@ -1,7 +1,6 @@
 // Global variables
 let allMagazines = [];
 let pageFlip = null;
-const flipSound = document.getElementById('flip-sound');
 
 // Load magazine data
 async function loadMagazineData() {
@@ -9,8 +8,6 @@ async function loadMagazineData() {
         const response = await fetch('data.json');
         const data = await response.json();
         allMagazines = data.magazines;
-        
-        populateFilters();
         renderMagazines(allMagazines);
     } catch (error) {
         console.error('Error loading magazine data:', error);
@@ -37,38 +34,8 @@ async function loadMagazineData() {
                 coverImage: 'books/book2/1.jpg'
             }
         ];
-        populateFilters();
         renderMagazines(allMagazines);
     }
-}
-
-// Populate filter dropdowns
-function populateFilters() {
-    const languages = [...new Set(allMagazines.map(m => m.language))];
-    const years = [...new Set(allMagazines.map(m => m.year))].sort((a, b) => b - a);
-    const months = [...new Set(allMagazines.map(m => m.month))];
-    
-    const languageFilter = document.getElementById('language-filter');
-    const yearFilter = document.getElementById('year-filter');
-    const monthFilter = document.getElementById('month-filter');
-    
-    // Populate language
-    languageFilter.innerHTML = '<option value="all">All Languages</option>';
-    languages.forEach(lang => {
-        languageFilter.innerHTML += `<option value="${lang}">${lang}</option>`;
-    });
-    
-    // Populate year
-    yearFilter.innerHTML = '<option value="all">All Year</option>';
-    years.forEach(year => {
-        yearFilter.innerHTML += `<option value="${year}">${year}</option>`;
-    });
-    
-    // Populate month
-    monthFilter.innerHTML = '<option value="all">All Months</option>';
-    months.forEach(month => {
-        monthFilter.innerHTML += `<option value="${month}">${month}</option>`;
-    });
 }
 
 // Render magazines in grid
@@ -84,48 +51,14 @@ function renderMagazines(magazines) {
     
     noResults.classList.add('hidden');
     
-    grid.innerHTML = magazines.map((mag, index) => `
+    // Removed the audio badge from the HTML template below
+    grid.innerHTML = magazines.map((mag) => `
         <div class="magazine-card" onclick="openMagazine(${mag.id})">
             <img src="${mag.coverImage}" alt="${mag.title}" loading="lazy">
             <div class="overlay"></div>
-            <div class="audio-badge">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
-                </svg>
-            </div>
             <div class="title">${mag.title}</div>
         </div>
     `).join('');
-}
-
-// Filter magazines
-function filterMagazines() {
-    const languageValue = document.getElementById('language-filter').value;
-    const yearValue = document.getElementById('year-filter').value;
-    const monthValue = document.getElementById('month-filter').value;
-    const searchValue = document.getElementById('search-input').value.toLowerCase();
-    
-    let filtered = allMagazines;
-    
-    if (languageValue !== 'all') {
-        filtered = filtered.filter(m => m.language === languageValue);
-    }
-    
-    if (yearValue !== 'all') {
-        filtered = filtered.filter(m => m.year.toString() === yearValue);
-    }
-    
-    if (monthValue !== 'all') {
-        filtered = filtered.filter(m => m.month === monthValue);
-    }
-    
-    if (searchValue) {
-        filtered = filtered.filter(m => 
-            m.title.toLowerCase().includes(searchValue)
-        );
-    }
-    
-    renderMagazines(filtered);
 }
 
 // Open magazine in flipbook view
@@ -135,6 +68,7 @@ function openMagazine(magazineId) {
     
     document.getElementById('grid-view').classList.add('hidden');
     document.getElementById('flipbook-view').classList.remove('hidden');
+    document.getElementById('flipbook-view').classList.add('flex');
     
     const container = document.getElementById('magazine');
     container.innerHTML = '';
@@ -151,9 +85,9 @@ function openMagazine(magazineId) {
     const isMobile = window.innerWidth < 768;
     
     pageFlip = new St.PageFlip(container, {
-        width: 1358,
-        height: 1004,
-        size: "stretch",
+        width: 1358,        // Your requested width
+        height: 1004,       // Your requested height
+        size: "fit",        // Changed from stretch to fit to maintain 2-page ratio
         minWidth: 300,
         maxWidth: 1358,
         minHeight: 220,
@@ -173,11 +107,6 @@ function openMagazine(magazineId) {
     
     // Update page counter on flip
     pageFlip.on('flip', (e) => {
-        if (flipSound) {
-            flipSound.currentTime = 0;
-            flipSound.play().catch(() => {});
-        }
-        
         const currentPage = e.data + 1;
         let displayPage;
         
@@ -199,6 +128,7 @@ function openMagazine(magazineId) {
 // Close flipbook and return to grid
 function closeFlipbook() {
     document.getElementById('flipbook-view').classList.add('hidden');
+    document.getElementById('flipbook-view').classList.remove('flex');
     document.getElementById('grid-view').classList.remove('hidden');
     
     if (pageFlip) {
@@ -211,14 +141,17 @@ function closeFlipbook() {
 document.addEventListener('DOMContentLoaded', function() {
     loadMagazineData();
     
-    // Filter listeners
-    document.getElementById('language-filter').addEventListener('change', filterMagazines);
-    document.getElementById('year-filter').addEventListener('change', filterMagazines);
-    document.getElementById('month-filter').addEventListener('change', filterMagazines);
-    document.getElementById('search-input').addEventListener('input', filterMagazines);
-    
     // Close button
     document.getElementById('close-flipbook').addEventListener('click', closeFlipbook);
+    
+    // Toolbar Buttons
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (pageFlip) pageFlip.flipPrev();
+    });
+    
+    document.getElementById('next-page').addEventListener('click', () => {
+        if (pageFlip) pageFlip.flipNext();
+    });
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
