@@ -53,9 +53,9 @@ function openMagazine(magazineId) {
     flipbookView.classList.remove('hidden');
     flipbookView.classList.add('flex');
     
-    // Rebuild the container and lock the aspect ratio so pages NEVER stretch or crop
+    // Rebuild the container (CSS media queries now handle the aspect ratio)
     const wrapper = document.getElementById('flipbook-wrapper');
-    wrapper.innerHTML = '<div id="magazine" style="aspect-ratio: 1358 / 1004; width: 100%; max-height: 100%;"></div>';
+    wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
     
     // Build pages
@@ -78,7 +78,7 @@ function openMagazine(magazineId) {
             maxHeight: 1004,
             showCover: true,
             flippingTime: 700,
-            usePortrait: false, // Forces 2-page view ALWAYS
+            usePortrait: true,  // THIS ALLOWS 1-PAGE VIEW ON MOBILE
             startPage: 0,
             drawShadow: true,
             maxShadowOpacity: 0.4,
@@ -97,11 +97,45 @@ function openMagazine(magazineId) {
         
         pageFlip.on('flip', (e) => {
             const currentPage = e.data + 1;
-            let displayPage = (currentPage === 1 || currentPage >= magazine.pages) 
-                ? currentPage 
-                : `${currentPage}-${currentPage + 1}`;
+            let displayPage;
+            
+            // Logic to handle the counter based on 1-page vs 2-page view
+            if (pageFlip.getOrientation() === 'portrait') {
+                displayPage = currentPage; // Mobile: showing 1 page
+            } else {
+                displayPage = (currentPage === 1 || currentPage >= magazine.pages) 
+                    ? currentPage 
+                    : `${currentPage}-${currentPage + 1}`; // Laptop: showing spread
+            }
             document.getElementById('page-counter').innerText = `${displayPage} / ${magazine.pages}`;
         });
+
+        // ==========================================
+        // GLOBAL SWIPE GESTURE LOGIC
+        // ==========================================
+        let touchstartX = 0;
+        let touchendX = 0;
+
+        flipbookView.addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        flipbookView.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimum swipe distance in pixels
+            if (touchendX < touchstartX - swipeThreshold) {
+                // Swiped Left -> Next Page
+                if(pageFlip) pageFlip.flipNext();
+            }
+            if (touchendX > touchstartX + swipeThreshold) {
+                // Swiped Right -> Previous Page
+                if(pageFlip) pageFlip.flipPrev();
+            }
+        }
 
     } catch (error) {
         console.error("CRITICAL ERROR initializing PageFlip:", error);
