@@ -4,15 +4,14 @@ let pageFlip = null;
 
 // Load magazine data
 async function loadMagazineData() {
-    console.log("1. Fetching magazine data...");
     try {
         const response = await fetch('data.json');
         const data = await response.json();
         allMagazines = data.magazines;
-        console.log("2. Data loaded successfully:", allMagazines);
         renderMagazines(allMagazines);
     } catch (error) {
-        console.error("ERROR loading data.json. Check your JSON format:", error);
+        console.error("ERROR loading data.json:", error);
+        // Fallback data
         allMagazines = [
             { id: 1, title: 'Lord Rushabhdev', folder: 'book1', pages: 16, language: 'English', year: 2025, month: 'April', coverImage: 'books/book1/1.jpg' },
             { id: 2, title: 'The Era Back Then', folder: 'book2', pages: 16, language: 'English', year: 2025, month: 'March', coverImage: 'books/book2/1.jpg' }
@@ -41,18 +40,12 @@ function renderMagazines(magazines) {
             <div class="title">${mag.title}</div>
         </div>
     `).join('');
-    console.log("3. Grid rendered with magazines.");
 }
 
 // Open magazine in flipbook view
 function openMagazine(magazineId) {
-    console.log(`4. Attempting to open magazine ID: ${magazineId}`);
-    
     const magazine = allMagazines.find(m => m.id === magazineId);
-    if (!magazine) {
-        console.error(`Magazine ID ${magazineId} not found in array!`);
-        return;
-    }
+    if (!magazine) return;
     
     // Switch Views
     document.getElementById('grid-view').classList.add('hidden');
@@ -60,8 +53,10 @@ function openMagazine(magazineId) {
     flipbookView.classList.remove('hidden');
     flipbookView.classList.add('flex');
     
+    // Rebuild the container from scratch to fix the crash on re-opening
+    const wrapper = document.getElementById('flipbook-wrapper');
+    wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
-    container.innerHTML = '';
     
     // Build pages
     for (let i = 1; i <= magazine.pages; i++) {
@@ -70,20 +65,13 @@ function openMagazine(magazineId) {
         page.innerHTML = `<img src="books/${magazine.folder}/${i}.jpg" alt="Page ${i}">`;
         container.appendChild(page);
     }
-    console.log(`5. Injected ${magazine.pages} pages into DOM.`);
     
     try {
-        // Destroy old instance if it exists to prevent memory leaks/crashes
-        if (pageFlip) {
-            pageFlip.destroy();
-            pageFlip = null;
-        }
-
-        console.log("6. Initializing St.PageFlip...");
+        // Initialize PageFlip
         pageFlip = new St.PageFlip(container, {
-            width: 679,         // Single page width (Half of 1358)
+            width: 679,         // Single page width
             height: 1004,       // Single page height
-            size: "stretch",    // THE FIX: This library only accepts "stretch" or "fixed"
+            size: "stretch",    // Required by library logic
             minWidth: 300,
             maxWidth: 679,
             minHeight: 400,
@@ -101,11 +89,9 @@ function openMagazine(magazineId) {
         });
         
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
-        console.log("7. PageFlip loadFromHTML executed.");
         
         // Counter logic
         pageFlip.on('init', () => {
-            console.log("8. PageFlip initialized successfully.");
             document.getElementById('page-counter').innerText = `1 / ${magazine.pages}`;
         });
         
@@ -119,7 +105,6 @@ function openMagazine(magazineId) {
 
     } catch (error) {
         console.error("CRITICAL ERROR initializing PageFlip:", error);
-        alert("The flipbook crashed. Press F12 and look at the console.");
     }
 }
 
