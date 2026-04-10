@@ -81,29 +81,48 @@ function openMagazine(magazineId) {
         container.appendChild(page);
     }
     
-    // Initialize PageFlip
-    const isMobile = window.innerWidth < 768;
-    
+// Initialize PageFlip
     pageFlip = new St.PageFlip(container, {
-        width: 1358,        // Your requested width
-        height: 1004,       // Your requested height
-        size: "fit",        // Changed from stretch to fit to maintain 2-page ratio
+        width: 679,         // HALF of 1358. This is the SINGLE page width.
+        height: 1004,       // Single page height.
+        size: "fit",        // Forces the book to scale down to fit the screen.
         minWidth: 300,
-        maxWidth: 1358,
-        minHeight: 220,
-        maxHeight: 1004,
+        maxWidth: 679,      // Max single page width
+        minHeight: 400,
+        maxHeight: 1004,    // Max single page height
         showCover: true,
-        flippingTime: 1000,
-        usePortrait: isMobile,
+        flippingTime: 700,  // Faster animation (feels more Apple-responsive)
+        usePortrait: false, // FORCES 2-page spread at all times. Disables single-page mobile view.
         startPage: 0,
         drawShadow: true,
-        maxShadowOpacity: 0.5,
+        maxShadowOpacity: 0.4,
         showPageCorners: true,
         disableFlipByClick: false,
-        mobileScrollSupport: true
+        mobileScrollSupport: true,
+        swipeDistance: 30   // Makes it highly sensitive to touch swipes
     });
     
     pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+    
+    // Fix the 0/0 bug: Force the counter update immediately after loading
+    pageFlip.on('init', () => {
+        document.getElementById('page-counter').innerText = `1 / ${magazine.pages}`;
+    });
+    
+    // Update page counter on flip
+    pageFlip.on('flip', (e) => {
+        const currentPage = e.data + 1;
+        let displayPage;
+        
+        // Since we forced 2-page view (usePortrait: false), we calculate for spreads
+        if (currentPage === 1 || currentPage >= magazine.pages) {
+            displayPage = currentPage; // Cover or Back Cover
+        } else {
+            displayPage = `${currentPage}-${currentPage + 1}`; // Spread
+        }
+        
+        document.getElementById('page-counter').innerText = `${displayPage} / ${magazine.pages}`;
+    });
     
     // Update page counter on flip
     pageFlip.on('flip', (e) => {
