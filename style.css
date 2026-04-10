@@ -81,6 +81,7 @@ body {
     background-color: #ffffff;
     width: 100%;
     height: 100%;
+    overflow: hidden; /* Actively chops off anything trying to bleed out of the page */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -89,7 +90,7 @@ body {
 .page img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: contain; /* Forces 100% of the image to be visible, preventing zoom-cropping */
     display: block;
 }
 
