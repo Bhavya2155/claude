@@ -53,9 +53,9 @@ function openMagazine(magazineId) {
     flipbookView.classList.remove('hidden');
     flipbookView.classList.add('flex');
     
-    // Rebuild the container from scratch to fix the crash on re-opening
+    // Rebuild the container and lock the aspect ratio so pages NEVER stretch or crop
     const wrapper = document.getElementById('flipbook-wrapper');
-    wrapper.innerHTML = '<div id="magazine"></div>';
+    wrapper.innerHTML = '<div id="magazine" style="aspect-ratio: 1358 / 1004; width: 100%; max-height: 100%;"></div>';
     const container = document.getElementById('magazine');
     
     // Build pages
