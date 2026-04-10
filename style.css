@@ -71,52 +71,14 @@ body {
     line-height: 1.4;
 }
 
-.magazine-card .audio-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
-}
-
-.magazine-card:hover .audio-badge {
-    transform: scale(1.1);
-    background: rgba(59, 130, 246, 0.95);
-}
-
-.magazine-card .audio-badge svg {
-    width: 20px;
-    height: 20px;
-    color: #4a5568;
-}
-
-.magazine-card:hover .audio-badge svg {
-    color: white;
-}
-
-/* Flipbook Wrapper */
-#flipbook-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 100%;
-    max-height: calc(100vh - 150px);
-}
-
+/* Flipbook Pages */
 .st-page-flip {
-    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.4);
     border-radius: 4px;
 }
 
 .page {
-    background-color: #1a1a1a;
+    background-color: #ffffff; /* Changed from dark to white for cleaner look */
     width: 100%;
     height: 100%;
     display: flex;
@@ -131,46 +93,11 @@ body {
     display: block;
 }
 
-/* Loading State */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
 /* Responsive Adjustments */
 @media (max-width: 640px) {
     .magazine-card .title {
         font-size: 11px;
     }
-    
-    .magazine-card .audio-badge {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .magazine-card .audio-badge svg {
-        width: 16px;
-        height: 16px;
-    }
-}
-
-/* Filter Dropdown Enhancements */
-select {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-input::placeholder {
-    color: #9ca3af;
 }
 
 /* Smooth Transitions */
