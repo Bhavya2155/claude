@@ -4,35 +4,18 @@ let pageFlip = null;
 
 // Load magazine data
 async function loadMagazineData() {
+    console.log("1. Fetching magazine data...");
     try {
         const response = await fetch('data.json');
         const data = await response.json();
         allMagazines = data.magazines;
+        console.log("2. Data loaded successfully:", allMagazines);
         renderMagazines(allMagazines);
     } catch (error) {
-        console.error('Error loading magazine data:', error);
-        // Fallback to hardcoded data if JSON fails
+        console.error("ERROR loading data.json. Check your JSON format:", error);
         allMagazines = [
-            {
-                id: 1,
-                title: 'Lord Rushabhdev',
-                folder: 'book1',
-                pages: 16,
-                language: 'English',
-                year: 2025,
-                month: 'April',
-                coverImage: 'books/book1/1.jpg'
-            },
-            {
-                id: 2,
-                title: 'The Era Back Then',
-                folder: 'book2',
-                pages: 16,
-                language: 'English',
-                year: 2025,
-                month: 'March',
-                coverImage: 'books/book2/1.jpg'
-            }
+            { id: 1, title: 'Lord Rushabhdev', folder: 'book1', pages: 16, language: 'English', year: 2025, month: 'April', coverImage: 'books/book1/1.jpg' },
+            { id: 2, title: 'The Era Back Then', folder: 'book2', pages: 16, language: 'English', year: 2025, month: 'March', coverImage: 'books/book2/1.jpg' }
         ];
         renderMagazines(allMagazines);
     }
@@ -51,7 +34,6 @@ function renderMagazines(magazines) {
     
     noResults.classList.add('hidden');
     
-    // Removed the audio badge from the HTML template below
     grid.innerHTML = magazines.map((mag) => `
         <div class="magazine-card" onclick="openMagazine(${mag.id})">
             <img src="${mag.coverImage}" alt="${mag.title}" loading="lazy">
@@ -59,16 +41,24 @@ function renderMagazines(magazines) {
             <div class="title">${mag.title}</div>
         </div>
     `).join('');
+    console.log("3. Grid rendered with magazines.");
 }
 
 // Open magazine in flipbook view
 function openMagazine(magazineId) {
-    const magazine = allMagazines.find(m => m.id === magazineId);
-    if (!magazine) return;
+    console.log(`4. Attempting to open magazine ID: ${magazineId}`);
     
+    const magazine = allMagazines.find(m => m.id === magazineId);
+    if (!magazine) {
+        console.error(`Magazine ID ${magazineId} not found in array!`);
+        return;
+    }
+    
+    // Switch Views
     document.getElementById('grid-view').classList.add('hidden');
-    document.getElementById('flipbook-view').classList.remove('hidden');
-    document.getElementById('flipbook-view').classList.add('flex');
+    const flipbookView = document.getElementById('flipbook-view');
+    flipbookView.classList.remove('hidden');
+    flipbookView.classList.add('flex');
     
     const container = document.getElementById('magazine');
     container.innerHTML = '';
@@ -80,71 +70,60 @@ function openMagazine(magazineId) {
         page.innerHTML = `<img src="books/${magazine.folder}/${i}.jpg" alt="Page ${i}">`;
         container.appendChild(page);
     }
+    console.log(`5. Injected ${magazine.pages} pages into DOM.`);
     
-// Initialize PageFlip
-    pageFlip = new St.PageFlip(container, {
-        width: 679,         // HALF of 1358. This is the SINGLE page width.
-        height: 1004,       // Single page height.
-        size: "fit",        // Forces the book to scale down to fit the screen.
-        minWidth: 300,
-        maxWidth: 679,      // Max single page width
-        minHeight: 400,
-        maxHeight: 1004,    // Max single page height
-        showCover: true,
-        flippingTime: 700,  // Faster animation (feels more Apple-responsive)
-        usePortrait: false, // FORCES 2-page spread at all times. Disables single-page mobile view.
-        startPage: 0,
-        drawShadow: true,
-        maxShadowOpacity: 0.4,
-        showPageCorners: true,
-        disableFlipByClick: false,
-        mobileScrollSupport: true,
-        swipeDistance: 30   // Makes it highly sensitive to touch swipes
-    });
-    
-    pageFlip.loadFromHTML(document.querySelectorAll('.page'));
-    
-    // Fix the 0/0 bug: Force the counter update immediately after loading
-    pageFlip.on('init', () => {
-        document.getElementById('page-counter').innerText = `1 / ${magazine.pages}`;
-    });
-    
-    // Update page counter on flip
-    pageFlip.on('flip', (e) => {
-        const currentPage = e.data + 1;
-        let displayPage;
-        
-        // Since we forced 2-page view (usePortrait: false), we calculate for spreads
-        if (currentPage === 1 || currentPage >= magazine.pages) {
-            displayPage = currentPage; // Cover or Back Cover
-        } else {
-            displayPage = `${currentPage}-${currentPage + 1}`; // Spread
+    try {
+        // Destroy old instance if it exists to prevent memory leaks/crashes
+        if (pageFlip) {
+            pageFlip.destroy();
+            pageFlip = null;
         }
+
+        console.log("6. Initializing St.PageFlip with width 679...");
+        pageFlip = new St.PageFlip(container, {
+            width: 679,         // Single page width
+            height: 1004,       // Single page height
+            size: "fit",        // Scale down to fit screen
+            minWidth: 300,
+            maxWidth: 679,
+            minHeight: 400,
+            maxHeight: 1004,
+            showCover: true,
+            flippingTime: 700,
+            usePortrait: false, // Forces 2-page view ALWAYS
+            startPage: 0,
+            drawShadow: true,
+            maxShadowOpacity: 0.4,
+            showPageCorners: true,
+            disableFlipByClick: false,
+            mobileScrollSupport: true,
+            swipeDistance: 30
+        });
         
-        document.getElementById('page-counter').innerText = `${displayPage} / ${magazine.pages}`;
-    });
-    
-    // Update page counter on flip
-    pageFlip.on('flip', (e) => {
-        const currentPage = e.data + 1;
-        let displayPage;
+        pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+        console.log("7. PageFlip loadFromHTML executed.");
         
-        if (currentPage === 1 || isMobile) {
-            displayPage = currentPage;
-        } else if (currentPage >= magazine.pages) {
-            displayPage = magazine.pages;
-        } else {
-            displayPage = `${currentPage}-${currentPage + 1}`;
-        }
+        // Counter logic
+        pageFlip.on('init', () => {
+            console.log("8. PageFlip initialized successfully.");
+            document.getElementById('page-counter').innerText = `1 / ${magazine.pages}`;
+        });
         
-        document.getElementById('page-counter').innerText = `${displayPage} / ${magazine.pages}`;
-    });
-    
-    // Set initial page counter
-    document.getElementById('page-counter').innerText = `1 / ${magazine.pages}`;
+        pageFlip.on('flip', (e) => {
+            const currentPage = e.data + 1;
+            let displayPage = (currentPage === 1 || currentPage >= magazine.pages) 
+                ? currentPage 
+                : `${currentPage}-${currentPage + 1}`;
+            document.getElementById('page-counter').innerText = `${displayPage} / ${magazine.pages}`;
+        });
+
+    } catch (error) {
+        console.error("CRITICAL ERROR initializing PageFlip:", error);
+        alert("The flipbook crashed. Press F12 and look at the console.");
+    }
 }
 
-// Close flipbook and return to grid
+// Close flipbook
 function closeFlipbook() {
     document.getElementById('flipbook-view').classList.add('hidden');
     document.getElementById('flipbook-view').classList.remove('flex');
@@ -160,10 +139,8 @@ function closeFlipbook() {
 document.addEventListener('DOMContentLoaded', function() {
     loadMagazineData();
     
-    // Close button
     document.getElementById('close-flipbook').addEventListener('click', closeFlipbook);
     
-    // Toolbar Buttons
     document.getElementById('prev-page').addEventListener('click', () => {
         if (pageFlip) pageFlip.flipPrev();
     });
@@ -172,19 +149,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (pageFlip) pageFlip.flipNext();
     });
     
-    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
-        if (pageFlip) {
-            if (e.key === 'ArrowLeft') {
-                pageFlip.flipPrev();
-            } else if (e.key === 'ArrowRight') {
-                pageFlip.flipNext();
-            } else if (e.key === 'Escape') {
-                closeFlipbook();
-            }
-        }
+        if (!pageFlip) return;
+        if (e.key === 'ArrowLeft') pageFlip.flipPrev();
+        else if (e.key === 'ArrowRight') pageFlip.flipNext();
+        else if (e.key === 'Escape') closeFlipbook();
     });
 });
 
-// Make openMagazine globally accessible
 window.openMagazine = openMagazine;
