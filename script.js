@@ -79,11 +79,11 @@ function openMagazine(magazineId) {
             pageFlip = null;
         }
 
-        console.log("6. Initializing St.PageFlip with width 679...");
+        console.log("6. Initializing St.PageFlip...");
         pageFlip = new St.PageFlip(container, {
-            width: 679,         // Single page width
+            width: 679,         // Single page width (Half of 1358)
             height: 1004,       // Single page height
-            size: "fit",        // Scale down to fit screen
+            size: "stretch",    // THE FIX: This library only accepts "stretch" or "fixed"
             minWidth: 300,
             maxWidth: 679,
             minHeight: 400,
