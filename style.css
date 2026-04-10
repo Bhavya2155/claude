@@ -1,0 +1,179 @@
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Magazine Card Styling */
+.magazine-card {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.magazine-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.magazine-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 3/4;
+}
+
+.magazine-card .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+}
+
+.magazine-card:hover .overlay {
+    opacity: 1;
+}
+
+.magazine-card .title {
+    margin-top: 12px;
+    padding: 0 8px 12px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5568;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.magazine-card .audio-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.magazine-card:hover .audio-badge {
+    transform: scale(1.1);
+    background: rgba(59, 130, 246, 0.95);
+}
+
+.magazine-card .audio-badge svg {
+    width: 20px;
+    height: 20px;
+    color: #4a5568;
+}
+
+.magazine-card:hover .audio-badge svg {
+    color: white;
+}
+
+/* Flipbook Wrapper */
+#flipbook-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    max-height: calc(100vh - 150px);
+}
+
+.st-page-flip {
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+}
+
+.page {
+    background-color: #1a1a1a;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* Loading State */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+    .magazine-card .title {
+        font-size: 11px;
+    }
+    
+    .magazine-card .audio-badge {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .magazine-card .audio-badge svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Filter Dropdown Enhancements */
+select {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+/* Smooth Transitions */
+* {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
