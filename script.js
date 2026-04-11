@@ -6,7 +6,7 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Data fetch error:", e); }
 }
 
 function renderMagazines(mags) {
@@ -27,15 +27,13 @@ function openMagazine(id) {
     view.classList.replace('hidden', 'flex');
     setTimeout(() => view.style.opacity = '1', 50);
 
-    const wrapper = document.getElementById('flipbook-wrapper');
-    wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
+    container.innerHTML = ''; 
 
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
-        // CRITICAL: Helps the library identify turning sheets
-        p.setAttribute('data-density', 'soft'); 
+        p.setAttribute('data-density', 'soft'); // Critical for smooth physics
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" alt="Page ${i}">`;
         container.appendChild(p);
     }
@@ -46,37 +44,34 @@ function openMagazine(id) {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
             showCover: true, 
-            flippingTime: 800, // Slower turn for realism
+            flippingTime: 800, 
             usePortrait: true,
             drawShadow: true, 
-            maxShadowOpacity: 0.4, 
+            maxShadowOpacity: 0.5, 
             showPageCorners: true,
-            mobileScrollSupport: true, 
-            swipeDistance: 30,
-            clickEventForward: false // Prevents glitching on double click
+            mobileScrollSupport: true,
+            useMouseEvents: true
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-        pageFlip.on('init', () => document.getElementById('page-counter').innerText = `1 / ${mag.pages}`);
+        pageFlip.on('init', () => {
+            document.getElementById('page-counter').innerText = `1 / ${mag.pages}`;
+        });
+
         pageFlip.on('flip', (e) => {
             const cur = e.data + 1;
             let disp = (pageFlip.getOrientation() === 'portrait' || cur === 1 || cur >= mag.pages) ? cur : `${cur}-${cur+1}`;
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
-        setupSwipes(view);
-    } catch (e) { console.error(e); }
-}
 
-function setupSwipes(view) {
-    let sx = null, isAnim = false;
-    pageFlip.on('changeState', (e) => isAnim = (e.data !== 'read'));
-    view.addEventListener('touchstart', e => sx = e.changedTouches[0].screenX, { passive: true });
-    view.addEventListener('touchend', e => {
-        if (sx === null || isAnim) return;
-        const d = e.changedTouches[0].screenX - sx;
-        if (Math.abs(d) > 50) d < 0 ? pageFlip.flipNext() : pageFlip.flipPrev();
-    }, { passive: true });
+        // Mapping all navigation buttons
+        document.getElementById('arrow-prev').onclick = () => pageFlip.flipPrev();
+        document.getElementById('arrow-next').onclick = () => pageFlip.flipNext();
+        document.getElementById('btn-prev').onclick = () => pageFlip.flipPrev();
+        document.getElementById('btn-next').onclick = () => pageFlip.flipNext();
+        
+    } catch (e) { console.error("PageFlip error:", e); }
 }
 
 function closeFlipbook() {
@@ -88,10 +83,6 @@ function closeFlipbook() {
     }, 300);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadMagazineData();
-    document.getElementById('close-flipbook').addEventListener('click', closeFlipbook);
-    document.getElementById('prev-page').addEventListener('click', () => pageFlip?.flipPrev());
-    document.getElementById('next-page').addEventListener('click', () => pageFlip?.flipNext());
-});
+document.getElementById('close-flipbook').onclick = closeFlipbook;
+document.addEventListener('DOMContentLoaded', loadMagazineData);
 window.openMagazine = openMagazine;
