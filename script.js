@@ -9,11 +9,11 @@ async function loadMagazineData() {
     } catch (e) { console.error("Data Load Error:", e); }
 }
 
-function renderMagazines(magazines) {
+function renderMagazines(mags) {
     const grid = document.getElementById('magazine-list');
-    grid.innerHTML = magazines.map((mag) => `
+    grid.innerHTML = mags.map((mag) => `
         <div class="magazine-card" onclick="openMagazine(${mag.id})">
-            <img src="${mag.coverImage}" alt="${mag.title}" loading="lazy">
+            <img src="${mag.coverImage}" alt="${mag.title}">
             <div class="title">${mag.title}</div>
         </div>
     `).join('');
@@ -26,12 +26,13 @@ function openMagazine(id) {
     document.getElementById('grid-view').classList.add('hidden');
     const view = document.getElementById('flipbook-view');
     view.classList.replace('hidden', 'flex');
+    // Minimal delay to trigger the CSS opacity transition
+    setTimeout(() => view.style.opacity = '1', 50);
 
     const wrapper = document.getElementById('flipbook-wrapper');
     wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
 
-    // High-resolution image injection
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
@@ -40,34 +41,31 @@ function openMagazine(id) {
     }
 
     try {
-        // SYNCHRONIZED PIXELS: 1004 x 1358
+        // MATCHING YOUR SCREENSHOT PIXELS
         const tw = 1004, th = 1358;
+
         pageFlip = new St.PageFlip(container, {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
-            showCover: true, flippingTime: 450, usePortrait: true,
-            drawShadow: true, maxShadowOpacity: 0.2, showPageCorners: true,
+            showCover: false, // FIX: Keeps pages bound together (no detaching cover)
+            flippingTime: 400, usePortrait: true,
+            drawShadow: true, maxShadowOpacity: 0.2,
             mobileScrollSupport: true, swipeDistance: 30
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
-
-        // Initialize Panzoom for fluid zooming
-        panzoomInstance = Panzoom(wrapper, { 
-            maxScale: 4, 
-            minScale: 1, 
-            contain: 'outside' 
-        });
+        
+        // Panzoom initialization
+        panzoomInstance = Panzoom(wrapper, { maxScale: 4, minScale: 1, contain: 'outside' });
         wrapper.parentElement.addEventListener('wheel', panzoomInstance.zoomWithWheel);
 
-        // Counter logic
         pageFlip.on('init', () => document.getElementById('page-counter').innerText = `1 / ${mag.pages}`);
         pageFlip.on('flip', (e) => {
             const cur = e.data + 1;
             let disp = (pageFlip.getOrientation() === 'portrait' || cur === 1 || cur >= mag.pages) ? cur : `${cur}-${cur+1}`;
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
-
+        
         setupSwipes(view);
     } catch (e) { console.error(e); }
 }
@@ -87,10 +85,14 @@ function setupSwipes(view) {
 }
 
 function closeFlipbook() {
-    document.getElementById('flipbook-view').classList.replace('flex', 'hidden');
-    document.getElementById('grid-view').classList.remove('hidden');
-    if (pageFlip) pageFlip.destroy();
-    if (panzoomInstance) panzoomInstance.destroy();
+    const view = document.getElementById('flipbook-view');
+    view.style.opacity = '0';
+    setTimeout(() => {
+        view.classList.replace('flex', 'hidden');
+        document.getElementById('grid-view').classList.remove('hidden');
+        if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
+        if (panzoomInstance) { panzoomInstance.destroy(); panzoomInstance = null; }
+    }, 300);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
