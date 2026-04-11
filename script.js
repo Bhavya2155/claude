@@ -6,7 +6,7 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (e) { console.error("Data Load Error:", e); }
+    } catch (e) { console.error(e); }
 }
 
 function renderMagazines(mags) {
@@ -26,7 +26,6 @@ function openMagazine(id) {
     document.getElementById('grid-view').classList.add('hidden');
     const view = document.getElementById('flipbook-view');
     view.classList.replace('hidden', 'flex');
-    // Minimal delay to trigger the CSS opacity transition
     setTimeout(() => view.style.opacity = '1', 50);
 
     const wrapper = document.getElementById('flipbook-wrapper');
@@ -41,31 +40,38 @@ function openMagazine(id) {
     }
 
     try {
-        // MATCHING YOUR SCREENSHOT PIXELS
         const tw = 1004, th = 1358;
-
         pageFlip = new St.PageFlip(container, {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
-            showCover: true, // FIX: Keeps pages bound together (no detaching cover)
-            flippingTime: 400, usePortrait: true,
-            drawShadow: true, maxShadowOpacity: 0.2,
+            showCover: true, // Classic book style (First page single)
+            flippingTime: 500, usePortrait: true,
+            drawShadow: true, maxShadowOpacity: 0.25,
             mobileScrollSupport: true, swipeDistance: 30
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
-        
-        // Panzoom initialization
-        panzoomInstance = Panzoom(wrapper, { maxScale: 4, minScale: 1, contain: 'outside' });
-        wrapper.parentElement.addEventListener('wheel', panzoomInstance.zoomWithWheel);
+
+        // Panzoom Init
+        panzoomInstance = Panzoom(wrapper, { 
+            maxScale: 5, 
+            minScale: 1, 
+            contain: 'outside',
+            step: 0.3
+        });
+
+        // Zoom Button Event Listeners
+        document.getElementById('zoom-in').onclick = () => panzoomInstance.zoomIn();
+        document.getElementById('zoom-out').onclick = () => panzoomInstance.zoomOut();
 
         pageFlip.on('init', () => document.getElementById('page-counter').innerText = `1 / ${mag.pages}`);
         pageFlip.on('flip', (e) => {
             const cur = e.data + 1;
             let disp = (pageFlip.getOrientation() === 'portrait' || cur === 1 || cur >= mag.pages) ? cur : `${cur}-${cur+1}`;
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
+            panzoomInstance.reset(); // Reset zoom when turning page
         });
-        
+
         setupSwipes(view);
     } catch (e) { console.error(e); }
 }
@@ -73,10 +79,16 @@ function openMagazine(id) {
 function setupSwipes(view) {
     let sx = null, isAnim = false;
     pageFlip.on('changeState', (e) => isAnim = (e.data !== 'read'));
+
     view.addEventListener('touchstart', e => {
-        if (e.target.closest('#magazine') || (panzoomInstance && panzoomInstance.getScale() > 1)) { sx = null; return; }
+        // LOCK SWIPE: If zoom scale is greater than 1, we stop the swipe entirely
+        if (panzoomInstance && panzoomInstance.getScale() > 1) {
+            sx = null;
+            return;
+        }
         sx = e.changedTouches[0].screenX;
     }, { passive: true });
+
     view.addEventListener('touchend', e => {
         if (sx === null || isAnim) return;
         const d = e.changedTouches[0].screenX - sx;
@@ -101,4 +113,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('prev-page').addEventListener('click', () => pageFlip?.flipPrev());
     document.getElementById('next-page').addEventListener('click', () => pageFlip?.flipNext());
 });
+
 window.openMagazine = openMagazine;
