@@ -1,55 +1,37 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: #fff; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; }
 ::-webkit-scrollbar { display: none; }
 
-/* Homepage Styles */
-.magazine-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.magazine-card:hover { transform: scale(1.02) translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+/* Grid Styles */
+.magazine-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: 0.4s; }
+.magazine-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-.magazine-card .title { padding: 12px; text-align: center; font-weight: 500; font-size: 13px; color: #333; }
+.magazine-card .title { padding: 12px; text-align: center; font-weight: 500; font-size: 12px; color: #333; }
 
-/* Flipbook Viewer Logic */
+/* Flipbook Viewer Spacing */
 #flipbook-wrapper { 
     touch-action: none; 
     user-select: none; 
-    /* Spacing: Top is roughly half of bottom gap (Toolbar + padding) */
+    /* Top is half of bottom gap */
     padding-top: 4rem; 
+    padding-bottom: 8.5rem; 
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
 
-#magazine { 
-    width: 100%; 
-    height: 100%; 
-    margin: auto; 
-    box-shadow: 0 25px 60px rgba(0,0,0,0.2); 
-    background-color: white;
-}
+#magazine { width: 100%; height: 100%; margin: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.25); }
 
-/* Correct Ratios for 1004x1358 images */
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
 @media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
 
-/* Page Hardware Acceleration */
-.page { 
-    background: #fff; 
-    width: 100%; 
-    height: 100%; 
-    overflow: hidden; 
-    transform: translateZ(0); 
-    backface-visibility: hidden; 
-    position: relative; 
-}
+.page { background: #fff; width: 100%; height: 100%; overflow: hidden; transform: translateZ(0); backface-visibility: hidden; position: relative; }
 .page img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* Spine Shadow: Keeps pages looking bound together */
+/* Deep Spine shadow for realistic book fold */
 .page::after {
     content: ""; position: absolute; top: 0; width: 45px; height: 100%; pointer-events: none; z-index: 10;
 }
-.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 100%); }
-.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 100%); }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%); }
 
-/* Transition for Viewer */
-#flipbook-view {
-    transition: opacity 0.3s ease-in-out;
-}
+#flipbook-view { transition: opacity 0.3s ease-in-out; }
