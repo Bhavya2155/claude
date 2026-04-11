@@ -23,9 +23,7 @@ function openMagazine(id) {
     const mag = allMagazines.find(m => m.id === id);
     if (!mag) return;
 
-    // DO NOT HIDE THE GRID VIEW. We need it visible but blurred.
-    // document.getElementById('grid-view').classList.add('hidden'); // Removed
-
+    // View is shown, grid-view stays visible in background for the blur effect
     const view = document.getElementById('flipbook-view');
     view.classList.replace('hidden', 'flex');
     setTimeout(() => view.style.opacity = '1', 50);
@@ -46,17 +44,12 @@ function openMagazine(id) {
         pageFlip = new St.PageFlip(container, {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
-            showCover: true, // Book style
-            flippingTime: 450, usePortrait: true,
-            drawShadow: true, maxShadowOpacity: 0.2,
+            showCover: true, flippingTime: 500, usePortrait: true,
+            drawShadow: true, maxShadowOpacity: 0.2, showPageCorners: true,
             mobileScrollSupport: true, swipeDistance: 30
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
-
-        // ==========================================
-        // PANZOOM REMOVED - WHITE BG ISSUE FIXED
-        // ==========================================
 
         pageFlip.on('init', () => document.getElementById('page-counter').innerText = `1 / ${mag.pages}`);
         pageFlip.on('flip', (e) => {
@@ -69,7 +62,6 @@ function openMagazine(id) {
 }
 
 function setupSwipes(view) {
-    // Zoom lock logic removed. Swiping is now always native and clean.
     let sx = null, isAnim = false;
     pageFlip.on('changeState', (e) => isAnim = (e.data !== 'read'));
     view.addEventListener('touchstart', e => sx = e.changedTouches[0].screenX, { passive: true });
@@ -85,7 +77,6 @@ function closeFlipbook() {
     view.style.opacity = '0';
     setTimeout(() => {
         view.classList.replace('flex', 'hidden');
-        // Grid View is already visible, no need to unhide.
         if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
     }, 300);
 }
