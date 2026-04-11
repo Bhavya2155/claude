@@ -12,9 +12,7 @@
 
     <div id="grid-view" class="container mx-auto px-4 py-8 max-w-7xl">
         <header class="mb-12 text-center">
-            <div class="flex justify-center mb-8 mt-4">
-                <img src="logo.png" alt="Logo" class="h-16 md:h-20 object-contain">
-            </div>
+            <div class="flex justify-center mb-8 mt-4"><img src="logo.png" alt="Logo" class="h-16 md:h-20 object-contain"></div>
             <div class="border-b-2 border-gray-100 pb-4 text-left">
                 <h1 class="text-3xl font-bold text-red-700 uppercase tracking-tight">Magazines</h1>
             </div>
@@ -22,16 +20,16 @@
         <div id="magazine-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"></div>
     </div>
 
-    <div id="flipbook-view" class="fixed inset-0 z-50 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+    <div id="flipbook-view" class="fixed inset-0 z-[500] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-black/95 backdrop-blur-md -z-10"></div>
         
-        <button id="close-flipbook" class="absolute top-6 right-6 text-white/60 hover:text-white text-3xl z-[300] cursor-pointer">✕</button>
+        <button id="close-flipbook" class="absolute top-6 right-6 text-white/60 hover:text-white text-3xl z-[600] cursor-pointer">✕</button>
         
-        <div id="flipbook-wrapper" class="w-full flex-grow flex items-center justify-center p-4 overflow-hidden z-10">
+        <div id="flipbook-wrapper" class="w-full flex-grow flex items-center justify-center p-4 overflow-hidden">
             <div id="magazine" class="st-page-flip"></div>
         </div>
 
-        <div class="mb-10 z-[300]">
+        <div class="mb-10 z-[600]">
             <div class="h-12 px-6 bg-transparent flex items-center gap-8">
                 <button id="btn-prev" class="text-white font-bold hover:text-orange-500 transition-colors uppercase text-xs tracking-widest cursor-pointer">Prev</button>
                 <span id="page-counter" class="text-white/50 font-bold text-[11px] tracking-[0.2em]">0 / 0</span>
