@@ -2,62 +2,49 @@
 body { font-family: -apple-system, sans-serif; background: #fff; }
 ::-webkit-scrollbar { display: none; }
 
-/* Grid Styles (Remain visible) */
+/* Grid Styles */
 .magazine-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: 0.4s; }
 .magazine-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
 .magazine-card .title { padding: 12px; text-align: center; font-weight: 500; font-size: 13px; color: #333; }
 
-/* ==========================================
-   FLUID & BLURRED VIEWER OVERLAY
-   ========================================== */
-#flipbook-view { 
-    transition: opacity 0.3s ease-in-out; 
-    /* Translucent grey with heavy blur shows home grid behind */
-    background-color: rgba(229, 231, 235, 0.5); /* gray-200 / 50% */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-/* Flipbook Spacing and Alignment */
+/* Wrapper Spacing */
 #flipbook-wrapper { 
     touch-action: none; 
     user-select: none; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Spacing balances top gap (1/2 size of bottom gap) */
-    padding-top: 4.5rem; 
-    padding-bottom: 9rem; 
+    padding-top: 3.5rem; /* Exactly half of bottom space */
+    padding-bottom: 7rem; 
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
 
+/* Book Frame: Clean & High-Def */
 #magazine { 
     width: 100%; 
     height: 100%; 
     margin: auto; 
-    /* Deep shadow anchors book on blurred background */
-    box-shadow: 0 30px 70px rgba(0,0,0,0.3); 
+    box-shadow: 0 30px 100px rgba(0,0,0,0.3); 
 }
 
-/* HIGH-RES RATIOS (Based on 1004x1358 images) */
+/* Ratios for 1004 x 1358 */
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
 @media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
 
-/* Page Styles and Spine fold for Attached look */
+/* Page Hardware Acceleration */
 .page { 
-    background: transparent; 
+    background: #fff; 
     width: 100%; 
     height: 100%; 
     overflow: hidden; 
     transform: translateZ(0); 
     backface-visibility: hidden; 
-    position: relative; 
+    position: relative;
 }
 .page img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* Spinal Shadow logic for Attached feel */
+/* Spine Shadow for "Attached" feel */
 .page::after { content: ""; position: absolute; top: 0; width: 45px; height: 100%; pointer-events: none; z-index: 10; }
 .page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%); }
 .page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%); }
+
+#flipbook-view { transition: opacity 0.3s ease-in-out; }
