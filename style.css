@@ -119,15 +119,17 @@ body {
 }
 
 /* Desktop/Tablet (Landscape 2-page view) */
+/* Multiply your JPG width by 2. Example: 800 * 2 = 1600 */
 @media (min-width: 768px) {
     #magazine {
-        aspect-ratio: 1358 / 1004;
+        aspect-ratio: 1600 / 1130; /* [WIDTH * 2] / [HEIGHT] */
     }
 }
 
 /* Mobile (Portrait 1-page view) */
 @media (max-width: 767px) {
     #magazine {
-        aspect-ratio: 679 / 1004;
+        aspect-ratio: 1004 / 1358; /* [TRUE WIDTH] / [TRUE HEIGHT] */
     }
+}
 }
