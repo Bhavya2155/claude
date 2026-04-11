@@ -1,37 +1,63 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; }
+body { font-family: -apple-system, sans-serif; background: #fff; }
 ::-webkit-scrollbar { display: none; }
 
-/* Grid Styles */
+/* Grid Styles (Remain visible) */
 .magazine-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: 0.4s; }
 .magazine-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-.magazine-card .title { padding: 12px; text-align: center; font-weight: 500; font-size: 12px; color: #333; }
+.magazine-card .title { padding: 12px; text-align: center; font-weight: 500; font-size: 13px; color: #333; }
 
-/* Flipbook Viewer Spacing */
+/* ==========================================
+   FLUID & BLURRED VIEWER OVERLAY
+   ========================================== */
+#flipbook-view { 
+    transition: opacity 0.3s ease-in-out; 
+    /* Translucent grey with heavy blur shows home grid behind */
+    background-color: rgba(229, 231, 235, 0.5); /* gray-200 / 50% */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Flipbook Spacing and Alignment */
 #flipbook-wrapper { 
     touch-action: none; 
     user-select: none; 
-    /* Top is half of bottom gap */
-    padding-top: 4rem; 
-    padding-bottom: 8.5rem; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Spacing balances top gap (1/2 size of bottom gap) */
+    padding-top: 4.5rem; 
+    padding-bottom: 9rem; 
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
 
-#magazine { width: 100%; height: 100%; margin: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.25); }
+#magazine { 
+    width: 100%; 
+    height: 100%; 
+    margin: auto; 
+    /* Deep shadow anchors book on blurred background */
+    box-shadow: 0 30px 70px rgba(0,0,0,0.3); 
+}
 
+/* HIGH-RES RATIOS (Based on 1004x1358 images) */
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
 @media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
 
-.page { background: #fff; width: 100%; height: 100%; overflow: hidden; transform: translateZ(0); backface-visibility: hidden; position: relative; }
+/* Page Styles and Spine fold for Attached look */
+.page { 
+    background: transparent; 
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+    transform: translateZ(0); 
+    backface-visibility: hidden; 
+    position: relative; 
+}
 .page img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* Deep Spine shadow for realistic book fold */
-.page::after {
-    content: ""; position: absolute; top: 0; width: 45px; height: 100%; pointer-events: none; z-index: 10;
-}
+/* Spinal Shadow logic for Attached feel */
+.page::after { content: ""; position: absolute; top: 0; width: 45px; height: 100%; pointer-events: none; z-index: 10; }
 .page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%); }
 .page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%); }
-
-#flipbook-view { transition: opacity 0.3s ease-in-out; }
