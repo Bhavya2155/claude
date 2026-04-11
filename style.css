@@ -1,4 +1,4 @@
-/* Reset & Base Styles */
+/* 1. Global Reset & Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -7,9 +7,10 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #ffffff;
 }
 
-/* Hide scrollbar */
+/* Hide scrollbars for a clean professional look */
 ::-webkit-scrollbar {
     display: none;
 }
@@ -19,7 +20,7 @@ body {
     scrollbar-width: none;
 }
 
-/* Magazine Card Styling */
+/* 2. Magazine Grid Section */
 .magazine-card {
     position: relative;
     cursor: pointer;
@@ -27,12 +28,12 @@ body {
     border-radius: 8px;
     overflow: hidden;
     background: white;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .magazine-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .magazine-card img {
@@ -41,24 +42,6 @@ body {
     display: block;
     object-fit: cover;
     aspect-ratio: 3/4;
-}
-
-.magazine-card .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    display: flex;
-    align-items: flex-end;
-    padding: 16px;
-}
-
-.magazine-card:hover .overlay {
-    opacity: 1;
 }
 
 .magazine-card .title {
@@ -71,14 +54,28 @@ body {
     line-height: 1.4;
 }
 
-/* Flipbook Pages */
-.st-page-flip {
-    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.4);
-    border-radius: 4px;
+/* 3. Flipbook Viewer & Container */
+#magazine {
+    width: 100%;
+    height: 100%;
 }
 
+/* Responsive "Iron Cage" - Ensures no white gaps based on your image ratio */
+@media (min-width: 768px) {
+    #magazine {
+        aspect-ratio: 1358 / 1004; /* Landscape 2-page view */
+    }
+}
+
+@media (max-width: 767px) {
+    #magazine {
+        aspect-ratio: 679 / 1004; /* Mobile 1-page portrait view */
+    }
+}
+
+/* 4. Flipbook Page Styles & Anti-Lag Hardware Acceleration */
 .page {
-    background-color: transparent; /* Removed the white background */
+    background-color: transparent; /* Removes white borders/hinge gaps */
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -86,7 +83,7 @@ body {
     align-items: center;
     justify-content: center;
     
-    /* ANTI-LAG HARDWARE ACCELERATION */
+    /* Hardware Acceleration to stop lagging */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     will-change: transform;
@@ -96,40 +93,24 @@ body {
 .page img {
     width: 100%;
     height: 100%;
-    object-fit: 100% 100%; /* Removes the forced stretch, relies on the container */
+    object-fit: fill; /* Stretches to kill all gaps */
     display: block;
 }
 
-/* Responsive Adjustments */
+/* 5. Panzoom & Interaction Settings */
+#flipbook-wrapper {
+    transition: transform 0.1s ease-out;
+    touch-action: none; /* Required for Pinch-to-Zoom */
+    user-select: none;
+}
+
+#flipbook-view {
+    overflow: hidden;
+}
+
+/* 6. Responsive Font Sizes */
 @media (max-width: 640px) {
     .magazine-card .title {
         font-size: 11px;
     }
-}
-
-/* Smooth Transitions */
-* {
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-/* Responsive Flipbook Container */
-#magazine {
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
-}
-
-/* Desktop/Tablet (Landscape 2-page view) */
-/* Multiply your JPG width by 2. Example: 800 * 2 = 1600 */
-@media (min-width: 768px) {
-    #magazine {
-        aspect-ratio: 1600 / 1130; /* [WIDTH * 2] / [HEIGHT] */
-    }
-}
-
-/* Mobile (Portrait 1-page view) */
-@media (max-width: 767px) {
-    #magazine {
-        aspect-ratio: 1004 / 1358; /* [TRUE WIDTH] / [TRUE HEIGHT] */
-    }
-}
 }
