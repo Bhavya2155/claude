@@ -1,6 +1,4 @@
-let allMagazines = [];
-let pageFlip = null;
-let panzoomInstance = null;
+let allMagazines = [], pageFlip = null, panzoomInstance = null;
 
 async function loadMagazineData() {
     try {
@@ -8,67 +6,53 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (error) {
-        console.error("Data Load Error:", error);
-    }
+    } catch (e) { console.error("Data Load Error:", e); }
 }
 
 function renderMagazines(magazines) {
     const grid = document.getElementById('magazine-list');
     grid.innerHTML = magazines.map((mag) => `
         <div class="magazine-card" onclick="openMagazine(${mag.id})">
-            <img src="${mag.coverImage}" alt="${mag.title}">
+            <img src="${mag.coverImage}" alt="${mag.title}" loading="lazy">
             <div class="title">${mag.title}</div>
         </div>
     `).join('');
 }
 
-function openMagazine(magazineId) {
-    const magazine = allMagazines.find(m => m.id === magazineId);
-    if (!magazine) return;
+function openMagazine(id) {
+    const mag = allMagazines.find(m => m.id === id);
+    if (!mag) return;
 
     document.getElementById('grid-view').classList.add('hidden');
-    const flipbookView = document.getElementById('flipbook-view');
-    flipbookView.classList.replace('hidden', 'flex');
+    const view = document.getElementById('flipbook-view');
+    view.classList.replace('hidden', 'flex');
 
     const wrapper = document.getElementById('flipbook-wrapper');
     wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
 
-    for (let i = 1; i <= magazine.pages; i++) {
-        const page = document.createElement('div');
-        page.className = 'page';
-        page.innerHTML = `<img src="books/${magazine.folder}/${i}.jpg" alt="Page ${i}">`;
-        container.appendChild(page);
+    // High-resolution image injection
+    for (let i = 1; i <= mag.pages; i++) {
+        const p = document.createElement('div');
+        p.className = 'page';
+        p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" alt="Page ${i}">`;
+        container.appendChild(p);
     }
 
     try {
-        // EXACT PIXELS FROM YOUR SCREENSHOT
-        const trueWidth = 1004; 
-        const trueHeight = 1358;
-
+        // SYNCHRONIZED PIXELS: 1004 x 1358
+        const tw = 1004, th = 1358;
         pageFlip = new St.PageFlip(container, {
-            width: trueWidth, 
-            height: trueHeight,
-            size: "stretch", 
-            minWidth: 300, 
-            maxWidth: trueWidth,
-            minHeight: 400, 
-            maxHeight: trueHeight,
-            showCover: true, 
-            flippingTime: 450, 
-            usePortrait: true,
-            startPage: 0, 
-            drawShadow: true, 
-            maxShadowOpacity: 0.3,
-            showPageCorners: true, 
-            mobileScrollSupport: true, 
-            swipeDistance: 30
+            width: tw, height: th, size: "stretch",
+            minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
+            showCover: true, flippingTime: 450, usePortrait: true,
+            drawShadow: true, maxShadowOpacity: 0.2, showPageCorners: true,
+            mobileScrollSupport: true, swipeDistance: 30
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-        // Initialize Zoom on the WRAPPER
+        // Initialize Panzoom for fluid zooming
         panzoomInstance = Panzoom(wrapper, { 
             maxScale: 4, 
             minScale: 1, 
@@ -76,37 +60,29 @@ function openMagazine(magazineId) {
         });
         wrapper.parentElement.addEventListener('wheel', panzoomInstance.zoomWithWheel);
 
-        pageFlip.on('init', () => {
-            document.getElementById('page-counter').innerText = `1 / ${magazine.pages}`;
-        });
-
+        // Counter logic
+        pageFlip.on('init', () => document.getElementById('page-counter').innerText = `1 / ${mag.pages}`);
         pageFlip.on('flip', (e) => {
             const cur = e.data + 1;
-            let display = (pageFlip.getOrientation() === 'portrait' || cur === 1 || cur >= magazine.pages) 
-                ? cur : `${cur}-${cur + 1}`;
-            document.getElementById('page-counter').innerText = `${display} / ${magazine.pages}`;
+            let disp = (pageFlip.getOrientation() === 'portrait' || cur === 1 || cur >= mag.pages) ? cur : `${cur}-${cur+1}`;
+            document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        setupSwipes(flipbookView);
+        setupSwipes(view);
     } catch (e) { console.error(e); }
 }
 
 function setupSwipes(view) {
-    let startX = null, isAnimating = false;
-    pageFlip.on('changeState', (e) => isAnimating = (e.data !== 'read'));
-
+    let sx = null, isAnim = false;
+    pageFlip.on('changeState', (e) => isAnim = (e.data !== 'read'));
     view.addEventListener('touchstart', e => {
-        // DISABLE SWIPE IF ZOOMED
-        if (e.target.closest('#magazine') || (panzoomInstance && panzoomInstance.getScale() > 1)) {
-            startX = null; return;
-        }
-        startX = e.changedTouches[0].screenX;
+        if (e.target.closest('#magazine') || (panzoomInstance && panzoomInstance.getScale() > 1)) { sx = null; return; }
+        sx = e.changedTouches[0].screenX;
     }, { passive: true });
-
     view.addEventListener('touchend', e => {
-        if (startX === null || isAnimating) return;
-        const dist = e.changedTouches[0].screenX - startX;
-        if (Math.abs(dist) > 50) dist < 0 ? pageFlip.flipNext() : pageFlip.flipPrev();
+        if (sx === null || isAnim) return;
+        const d = e.changedTouches[0].screenX - sx;
+        if (Math.abs(d) > 50) d < 0 ? pageFlip.flipNext() : pageFlip.flipPrev();
     }, { passive: true });
 }
 
