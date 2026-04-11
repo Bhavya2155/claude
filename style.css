@@ -1,22 +1,151 @@
-/* Fluid Typography & Transitions */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background-color: #ffffff; }
-::-webkit-scrollbar { display: none; }
+/* ==========================================
+   1. GLOBAL RESET & BASE STYLES
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-/* Home Grid Card Aesthetic */
-.magazine-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.magazine-card:hover { transform: scale(1.02) translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
-.magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-bottom: 1px solid #f3f4f6; }
-.magazine-card .title { padding: 12px; text-align: center; font-weight: 500; font-size: 13px; color: #1d1d1f; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    background-color: #ffffff;
+    color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+}
 
-/* Flipbook Container Ratios */
-#magazine { width: 100%; height: 100%; }
-@media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
-@media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
+/* Hide scrollbars for a clean, app-like experience */
+::-webkit-scrollbar {
+    display: none;
+}
 
-/* Fluid Hardware Accelerated Pages */
-.page { background: transparent; width: 100%; height: 100%; overflow: hidden; transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased; }
-.page img { width: 100%; height: 100%; object-fit: contain; display: block; }
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 
-/* Interaction Container */
-#flipbook-wrapper { touch-action: none; user-select: none; padding-bottom: 3.5rem; }
+/* ==========================================
+   2. HOMEPAGE GRID (MAGAZINE CARDS)
+   ========================================== */
+.magazine-card {
+    cursor: pointer;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.magazine-card:hover {
+    transform: scale(1.02) translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.magazine-card img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-bottom: 1px solid #f3f4f6;
+    display: block;
+}
+
+.magazine-card .title {
+    padding: 14px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 13px;
+    color: #1d1d1f;
+    letter-spacing: -0.01em;
+}
+
+/* ==========================================
+   3. FLIPBOOK VIEWER OVERLAY
+   ========================================== */
+#flipbook-view {
+    background-color: rgba(245, 245, 247, 0.8); /* Apple light gray with transparency */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.5s ease;
+}
+
+/* ==========================================
+   4. THE FLIPBOOK CONTAINER & RATIOS
+   ========================================== */
+#flipbook-wrapper {
+    touch-action: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    
+    /* GAP FIX: Prevents book from touching top or overlapping toolbar */
+    padding-top: 5rem;    /* Space from top bar */
+    padding-bottom: 9rem; /* Massive space at bottom for the floating pill */
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+#magazine {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+
+/* HIGH-RES RATIOS (Based on 1004x1358 images) */
+@media (min-width: 768px) { 
+    #magazine { aspect-ratio: 2008 / 1358; } /* Laptop: 2-page spread */
+}
+
+@media (max-width: 767px) { 
+    #magazine { aspect-ratio: 1004 / 1358; } /* Mobile: 1-page portrait */
+}
+
+/* ==========================================
+   5. PAGE STYLES & GPU ACCELERATION
+   ========================================== */
+.page {
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    
+    /* ANTI-LAG: Forces GPU to handle the animation */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.page img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Keeps original resolution and proportions */
+    display: block;
+}
+
+/* ==========================================
+   6. UI ELEMENTS (TOOLBAR & BUTTONS)
+   ========================================== */
+
+/* The Floating Pill Toolbar */
+.fixed.bottom-8 {
+    /* Glassmorphism Effect */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+#page-counter {
+    background: rgba(0, 0, 0, 0.03);
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: #86868b;
+}
+
+/* Page corners and shadows for the library */
+.st-page-flip {
+    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+}
