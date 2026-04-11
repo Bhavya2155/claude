@@ -77,11 +77,11 @@ function openMagazine(magazineId) {
             minHeight: 400,
             maxHeight: 1004,
             showCover: true,
-            flippingTime: 450,  // Sped up from 700 to 450 for snappier feel
+            flippingTime: 450,  
             usePortrait: true,  
             startPage: 0,
             drawShadow: true,
-            maxShadowOpacity: 0.3, // Lowered shadow opacity to reduce GPU load
+            maxShadowOpacity: 0.3,
             showPageCorners: true,
             disableFlipByClick: false,
             mobileScrollSupport: true,
@@ -109,26 +109,32 @@ function openMagazine(magazineId) {
         });
 
         // ==========================================
-        // ANTI-LAG SWIPE GESTURE LOGIC
+        // ANTI-DOUBLE-FLIP SWIPE LOGIC
         // ==========================================
-        let touchstartX = 0;
-        let touchstartY = 0;
+        let touchstartX = null;
+        let touchstartY = null;
         let touchendX = 0;
         let touchendY = 0;
         let isAnimating = false;
 
-        // Lock swipes while page is turning to prevent lag-spikes
         pageFlip.on('changeState', (e) => {
             isAnimating = (e.data !== 'read'); 
         });
 
         flipbookView.addEventListener('touchstart', e => {
+            // FIX: If touching the actual book, let the library handle the native swipe!
+            // Only run the custom code if touching the gray background.
+            if (e.target.closest('#magazine')) {
+                touchstartX = null; 
+                return;
+            }
             touchstartX = e.changedTouches[0].screenX;
             touchstartY = e.changedTouches[0].screenY;
         }, { passive: true });
 
         flipbookView.addEventListener('touchend', e => {
-            if (isAnimating || !pageFlip) return; // Prevent swipe if already flipping
+            // Abort custom swipe if touch started on the book or is already turning
+            if (touchstartX === null || isAnimating || !pageFlip) return;
 
             touchendX = e.changedTouches[0].screenX;
             touchendY = e.changedTouches[0].screenY;
@@ -140,7 +146,6 @@ function openMagazine(magazineId) {
             const swipeDistY = touchendY - touchstartY;
             const swipeThreshold = 40; 
 
-            // Only flip if horizontal distance is greater than vertical distance (prevents scrolling misfires)
             if (Math.abs(swipeDistX) > swipeThreshold && Math.abs(swipeDistX) > Math.abs(swipeDistY)) {
                 if (swipeDistX < 0) {
                     pageFlip.flipNext(); // Swiped Left
