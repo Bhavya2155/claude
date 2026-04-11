@@ -8,9 +8,7 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
 
 #magazine { 
     width: 100%; height: 100%; margin: auto; 
-    perspective: 1500px;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+    perspective: 2500px; /* High perspective helps 3D depth */
 }
 
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
@@ -18,25 +16,28 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
 
 .page { 
     background: #fff; width: 100%; height: 100%; overflow: hidden; 
-    /* Force GPU to stop flicker */
-    transform: translate3d(0,0,0);
-    -webkit-transform: translate3d(0,0,0);
     position: relative;
+    /* FIX: Force both sides to stay rendered during the flip */
+    transform-style: preserve-3d !important;
+    -webkit-transform-style: preserve-3d !important;
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
 }
 
 .page img { 
     width: 100%; height: 100%; object-fit: contain; display: block; 
     pointer-events: none;
+    /* Ensures the image doesn't disappear during 3D rotation */
+    transform: translateZ(1px); 
 }
 
-/* UI Clicks Fix */
 #btn-prev, #btn-next, #close-flipbook {
     cursor: pointer !important;
     pointer-events: auto !important;
 }
 
-.page::after { content: ""; position: absolute; top: 0; width: 30px; height: 100%; pointer-events: none; z-index: 10; }
-.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 100%); }
-.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.1) 0%, transparent 100%); }
+.page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, transparent 100%); }
 
 #flipbook-view { transition: opacity 0.3s ease-in-out; }
