@@ -6,7 +6,7 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (e) { console.error("Data Load Error:", e); }
+    } catch (e) { console.error(e); }
 }
 
 function renderMagazines(mags) {
@@ -27,9 +27,8 @@ function openMagazine(id) {
     view.classList.replace('hidden', 'flex');
     setTimeout(() => view.style.opacity = '1', 50);
 
-    // HARD RESET: Wipe the wrapper and recreate the magazine div
     const wrapper = document.getElementById('flipbook-wrapper');
-    wrapper.innerHTML = '<div id="magazine"></div>';
+    wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
     const container = document.getElementById('magazine');
 
     for (let i = 1; i <= mag.pages; i++) {
@@ -46,13 +45,14 @@ function openMagazine(id) {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
             showCover: true, 
-            flippingTime: 600, 
+            flippingTime: 1000, // Slower turn fixes the "shadow-only" glitch
             usePortrait: true,
             drawShadow: true, 
-            maxShadowOpacity: 0.3, 
+            maxShadowOpacity: 0.4, 
             showPageCorners: false,
             mobileScrollSupport: true,
-            swipeDistance: 15
+            swipeDistance: 20,
+            clickEventForward: false // Prevents double-triggers
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
@@ -67,18 +67,18 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        // BIND BUTTONS
+        // RE-BIND BUTTONS
         document.getElementById('btn-prev').onclick = (e) => {
-            e.preventDefault();
+            e.stopPropagation();
             if (pageFlip) pageFlip.flipPrev();
         };
 
         document.getElementById('btn-next').onclick = (e) => {
-            e.preventDefault();
+            e.stopPropagation();
             if (pageFlip) pageFlip.flipNext();
         };
         
-    } catch (e) { console.error("PageFlip Error:", e); }
+    } catch (e) { console.error(e); }
 }
 
 function closeFlipbook() {
@@ -90,7 +90,6 @@ function closeFlipbook() {
             pageFlip.destroy();
             pageFlip = null;
         }
-        // Wipe the inner content so it's clean for the next open
         document.getElementById('flipbook-wrapper').innerHTML = '';
     }, 300);
 }
