@@ -45,38 +45,27 @@ function openMagazine(id) {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
             showCover: true, 
-            flippingTime: 1000, // Slower turn fixes the "shadow-only" glitch
+            flippingTime: 1000, // Slower, more elegant page turn
             usePortrait: true,
             drawShadow: true, 
-            maxShadowOpacity: 0.4, 
+            maxShadowOpacity: 0.5, // Darker shadow for better 3D depth
             showPageCorners: false,
             mobileScrollSupport: true,
             swipeDistance: 20,
-            clickEventForward: false // Prevents double-triggers
+            clickEventForward: false
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-        pageFlip.on('init', () => {
-            document.getElementById('page-counter').innerText = `1 / ${mag.pages}`;
-        });
-
+        pageFlip.on('init', () => document.getElementById('page-counter').innerText = `1 / ${mag.pages}`);
         pageFlip.on('flip', (e) => {
             const cur = e.data + 1;
             let disp = (pageFlip.getOrientation() === 'portrait' || cur === 1 || cur >= mag.pages) ? cur : `${cur}-${cur+1}`;
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        // RE-BIND BUTTONS
-        document.getElementById('btn-prev').onclick = (e) => {
-            e.stopPropagation();
-            if (pageFlip) pageFlip.flipPrev();
-        };
-
-        document.getElementById('btn-next').onclick = (e) => {
-            e.stopPropagation();
-            if (pageFlip) pageFlip.flipNext();
-        };
+        document.getElementById('btn-prev').onclick = (e) => { e.stopPropagation(); if (pageFlip) pageFlip.flipPrev(); };
+        document.getElementById('btn-next').onclick = (e) => { e.stopPropagation(); if (pageFlip) pageFlip.flipNext(); };
         
     } catch (e) { console.error(e); }
 }
@@ -86,10 +75,7 @@ function closeFlipbook() {
     view.style.opacity = '0';
     setTimeout(() => {
         view.classList.replace('flex', 'hidden');
-        if (pageFlip) {
-            pageFlip.destroy();
-            pageFlip = null;
-        }
+        if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
         document.getElementById('flipbook-wrapper').innerHTML = '';
     }, 300);
 }
