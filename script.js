@@ -47,7 +47,7 @@ function openMagazine(id) {
         pageFlip = new St.PageFlip(container, {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
-            showCover: false, // FIX: Keeps pages bound together (no detaching cover)
+            showCover: true, // FIX: Keeps pages bound together (no detaching cover)
             flippingTime: 400, usePortrait: true,
             drawShadow: true, maxShadowOpacity: 0.2,
             mobileScrollSupport: true, swipeDistance: 30
