@@ -6,7 +6,7 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (e) { console.error("Data fetch error:", e); }
+    } catch (e) { console.error("Data Load Error:", e); }
 }
 
 function renderMagazines(mags) {
@@ -33,7 +33,7 @@ function openMagazine(id) {
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
-        p.setAttribute('data-density', 'soft'); // Critical for smooth physics
+        p.setAttribute('data-density', 'soft');
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" alt="Page ${i}">`;
         container.appendChild(p);
     }
@@ -65,13 +65,16 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        // Mapping all navigation buttons
-        document.getElementById('arrow-prev').onclick = () => pageFlip.flipPrev();
-        document.getElementById('arrow-next').onclick = () => pageFlip.flipNext();
-        document.getElementById('btn-prev').onclick = () => pageFlip.flipPrev();
-        document.getElementById('btn-next').onclick = () => pageFlip.flipNext();
+        // Navigation Controllers
+        const goPrev = () => { if(pageFlip) pageFlip.flipPrev(); };
+        const goNext = () => { if(pageFlip) pageFlip.flipNext(); };
+
+        document.getElementById('arrow-prev').onclick = goPrev;
+        document.getElementById('arrow-next').onclick = goNext;
+        document.getElementById('btn-prev').onclick = goPrev;
+        document.getElementById('btn-next').onclick = goNext;
         
-    } catch (e) { console.error("PageFlip error:", e); }
+    } catch (e) { console.error("PageFlip Init Error:", e); }
 }
 
 function closeFlipbook() {
