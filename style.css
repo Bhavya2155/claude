@@ -1,28 +1,29 @@
+/* 1. Reset & Global Styles */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: sans-serif; background-color: #ffffff; }
 ::-webkit-scrollbar { display: none; }
 
-/* Grid Styles */
+/* 2. Magazine Grid Section */
 .magazine-card {
     cursor: pointer; border-radius: 8px; overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .magazine-card:hover { transform: translateY(-8px); }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-.magazine-card .title { padding: 12px; text-align: center; font-weight: 600; color: #4a5568; }
+.magazine-card .title { padding: 12px; text-align: center; font-weight: 600; color: #4a5568; font-size: 13px; }
 
-/* Viewer Layout */
+/* 3. Flipbook Viewer Logic (Dimensions synchronized with trueWidth/trueHeight in JS) */
 #magazine { width: 100%; height: 100%; }
 
-/* Desktop: 2 pages side-by-side (2008 / 1358) */
+/* Optimized Ratios for 1004 x 1358 */
 @media (min-width: 768px) { 
-    #magazine { aspect-ratio: 2008 / 1358; } 
+    #magazine { aspect-ratio: 2008 / 1358; } /* Laptop: Spread (1004 * 2) / 1358 */
 }
-/* Mobile: 1 page portrait (1004 / 1358) */
 @media (max-width: 767px) { 
-    #magazine { aspect-ratio: 1004 / 1358; } 
+    #magazine { aspect-ratio: 1004 / 1358; } /* Mobile: 1 Page */
 }
 
+/* 4. Page Styles & Anti-Lag Hardware Acceleration */
 .page {
     background: transparent; width: 100%; height: 100%; overflow: hidden;
     transform: translateZ(0); will-change: transform; backface-visibility: hidden;
@@ -30,12 +31,13 @@ body { font-family: sans-serif; background-color: #ffffff; }
 
 .page img {
     width: 100%; height: 100%;
-    object-fit: contain; /* Professional scaling, no stretching */
+    object-fit: contain; /* Prevents stretching and cropping */
     display: block;
 }
 
+/* 5. Interaction Settings */
 #flipbook-wrapper {
     touch-action: none;
     user-select: none;
-    padding-bottom: 5rem; /* Large gap so toolbar never cuts off page */
+    padding-bottom: 5rem; /* Large gap to prevent toolbar cutting off page */
 }
