@@ -27,8 +27,10 @@ function openMagazine(id) {
     view.classList.replace('hidden', 'flex');
     setTimeout(() => view.style.opacity = '1', 50);
 
+    // HARD RESET: Wipe the wrapper and recreate the magazine div
+    const wrapper = document.getElementById('flipbook-wrapper');
+    wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
-    container.innerHTML = ''; // Clear previous instances
 
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
@@ -65,7 +67,7 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        // RE-BIND BUTTONS TO CURRENT INSTANCE
+        // BIND BUTTONS
         document.getElementById('btn-prev').onclick = (e) => {
             e.preventDefault();
             if (pageFlip) pageFlip.flipPrev();
@@ -88,6 +90,8 @@ function closeFlipbook() {
             pageFlip.destroy();
             pageFlip = null;
         }
+        // Wipe the inner content so it's clean for the next open
+        document.getElementById('flipbook-wrapper').innerHTML = '';
     }, 300);
 }
 
