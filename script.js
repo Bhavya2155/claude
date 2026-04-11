@@ -13,7 +13,7 @@ async function loadMagazineData() {
         console.error("ERROR loading data.json:", error);
         // Fallback data
         allMagazines = [
-            { id: 1, title: 'Lord Rushabhdev', folder: 'book1', pages: 16, language: 'English', year: 2025, month: 'April', coverImage: 'books/book1/1.jpg' },
+            { id: 1, title: 'Sanskar Snichan', folder: 'book1', pages: 16, language: 'English', year: 2025, month: 'April', coverImage: 'books/book1/1.jpg' },
             { id: 2, title: 'The Era Back Then', folder: 'book2', pages: 16, language: 'English', year: 2025, month: 'March', coverImage: 'books/book2/1.jpg' }
         ];
         renderMagazines(allMagazines);
