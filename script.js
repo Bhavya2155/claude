@@ -23,7 +23,6 @@ function openMagazine(id) {
     const mag = allMagazines.find(m => m.id === id);
     if (!mag) return;
 
-    // View is shown, grid-view stays visible in background for the blur effect
     const view = document.getElementById('flipbook-view');
     view.classList.replace('hidden', 'flex');
     setTimeout(() => view.style.opacity = '1', 50);
@@ -35,6 +34,8 @@ function openMagazine(id) {
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
+        // CRITICAL: Helps the library identify turning sheets
+        p.setAttribute('data-density', 'soft'); 
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" alt="Page ${i}">`;
         container.appendChild(p);
     }
@@ -44,9 +45,15 @@ function openMagazine(id) {
         pageFlip = new St.PageFlip(container, {
             width: tw, height: th, size: "stretch",
             minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
-            showCover: true, flippingTime: 500, usePortrait: true,
-            drawShadow: true, maxShadowOpacity: 0.2, showPageCorners: true,
-            mobileScrollSupport: true, swipeDistance: 30
+            showCover: true, 
+            flippingTime: 800, // Slower turn for realism
+            usePortrait: true,
+            drawShadow: true, 
+            maxShadowOpacity: 0.4, 
+            showPageCorners: true,
+            mobileScrollSupport: true, 
+            swipeDistance: 30,
+            clickEventForward: false // Prevents glitching on double click
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
