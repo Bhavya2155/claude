@@ -1,41 +1,37 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #fff; -webkit-font-smoothing: antialiased; }
-::-webkit-scrollbar { display: none; }
+body { background: #fff; -webkit-tap-highlight-color: transparent; }
 
-/* Grid Styles */
 .magazine-card { cursor: pointer; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
-.magazine-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
 .magazine-card .title { padding: 10px; text-align: center; font-size: 11px; font-weight: 600; color: #444; }
 
-/* Flipbook Overlay Fixes */
-#flipbook-view { width: 100vw; height: 100vh; }
-
 #magazine { 
     width: 100%; height: 100%; margin: auto; 
-    box-shadow: 0 0 100px rgba(0,0,0,0.9); 
-    perspective: 2500px;
+    perspective: 1500px; /* Lower perspective is easier for mobile GPUs */
+    /* Prevents flickering during turn */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
-/* Maintain High-Res Ratios */
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
 @media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
 
 .page { 
     background: #fff; width: 100%; height: 100%; overflow: hidden; 
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
+    /* Force GPU rendering to stop flickering */
+    transform: translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
 }
 
-.page img { width: 100%; height: 100%; object-fit: contain; display: block; }
-
-/* Spine shadow for realistic book fold */
-.page::after { content: ""; position: absolute; top: 0; width: 50px; height: 100%; pointer-events: none; z-index: 10; }
-.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.2) 0%, transparent 100%); }
-.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.2) 0%, transparent 100%); }
-
-/* Force UI buttons to capture clicks */
-#arrow-prev, #arrow-next, #btn-prev, #btn-next, #close-flipbook {
-    cursor: pointer !important;
-    pointer-events: auto !important;
+.page img { 
+    width: 100%; height: 100%; object-fit: contain; display: block; 
+    /* Important for mobile: stops the image from 'jumping' */
+    pointer-events: none;
 }
+
+/* Slimmer shadows for better performance */
+.page::after { content: ""; position: absolute; top: 0; width: 30px; height: 100%; pointer-events: none; z-index: 10; }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.1) 0%, transparent 100%); }
+
+#flipbook-view { transition: opacity 0.3s ease-in-out; }
