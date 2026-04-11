@@ -1,43 +1,22 @@
-/* 1. Reset & Global Styles */
+/* Fluid Typography & Transitions */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: sans-serif; background-color: #ffffff; }
+body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background-color: #ffffff; }
 ::-webkit-scrollbar { display: none; }
 
-/* 2. Magazine Grid Section */
-.magazine-card {
-    cursor: pointer; border-radius: 8px; overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.magazine-card:hover { transform: translateY(-8px); }
-.magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-.magazine-card .title { padding: 12px; text-align: center; font-weight: 600; color: #4a5568; font-size: 13px; }
+/* Home Grid Card Aesthetic */
+.magazine-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.magazine-card:hover { transform: scale(1.02) translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+.magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-bottom: 1px solid #f3f4f6; }
+.magazine-card .title { padding: 12px; text-align: center; font-weight: 500; font-size: 13px; color: #1d1d1f; }
 
-/* 3. Flipbook Viewer Logic (Dimensions synchronized with trueWidth/trueHeight in JS) */
+/* Flipbook Container Ratios */
 #magazine { width: 100%; height: 100%; }
+@media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
+@media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
 
-/* Optimized Ratios for 1004 x 1358 */
-@media (min-width: 768px) { 
-    #magazine { aspect-ratio: 2008 / 1358; } /* Laptop: Spread (1004 * 2) / 1358 */
-}
-@media (max-width: 767px) { 
-    #magazine { aspect-ratio: 1004 / 1358; } /* Mobile: 1 Page */
-}
+/* Fluid Hardware Accelerated Pages */
+.page { background: transparent; width: 100%; height: 100%; overflow: hidden; transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased; }
+.page img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* 4. Page Styles & Anti-Lag Hardware Acceleration */
-.page {
-    background: transparent; width: 100%; height: 100%; overflow: hidden;
-    transform: translateZ(0); will-change: transform; backface-visibility: hidden;
-}
-
-.page img {
-    width: 100%; height: 100%;
-    object-fit: contain; /* Prevents stretching and cropping */
-    display: block;
-}
-
-/* 5. Interaction Settings */
-#flipbook-wrapper {
-    touch-action: none;
-    user-select: none;
-    padding-bottom: 5rem; /* Large gap to prevent toolbar cutting off page */
-}
+/* Interaction Container */
+#flipbook-wrapper { touch-action: none; user-select: none; padding-bottom: 3.5rem; }
