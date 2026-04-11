@@ -69,13 +69,13 @@ function openMagazine(magazineId) {
     try {
         // Initialize PageFlip
         pageFlip = new St.PageFlip(container, {
-            width: 679,         
-            height: 1004,       
+            width: 1004,         
+            height: 1358,       
             size: "stretch",    
             minWidth: 300,
-            maxWidth: 679,
+            maxWidth: 1004,
             minHeight: 400,
-            maxHeight: 1004,
+            maxHeight: 1358,
             showCover: true,
             flippingTime: 600,  
             usePortrait: true,  
