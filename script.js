@@ -77,7 +77,7 @@ function openMagazine(magazineId) {
             minHeight: 400,
             maxHeight: 1004,
             showCover: true,
-            flippingTime: 450,  
+            flippingTime: 600,  
             usePortrait: true,  
             startPage: 0,
             drawShadow: true,
