@@ -2,17 +2,17 @@
   "magazines": [
     {
       "id": 1,
-      "title": "Lord Rushabhdev",
+      "title": "Sanskar Shinchan",
       "folder": "book1",
       "pages": 16,
       "language": "English",
-      "year": 2025,
+      "year": 2026,
       "month": "April",
       "coverImage": "books/book1/1.jpg"
     },
     {
       "id": 2,
-      "title": "The Era Back Then",
+      "title": "Education",
       "folder": "book2",
       "pages": 16,
       "language": "English",
