@@ -81,10 +81,16 @@ body {
     background-color: #ffffff;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Actively chops off anything trying to bleed out of the page */
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    /* ANTI-LAG HARDWARE ACCELERATION */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .page img {
