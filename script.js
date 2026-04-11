@@ -53,7 +53,7 @@ function openMagazine(magazineId) {
     flipbookView.classList.remove('hidden');
     flipbookView.classList.add('flex');
     
-    // Rebuild the container (CSS media queries now handle the aspect ratio)
+    // Rebuild the container
     const wrapper = document.getElementById('flipbook-wrapper');
     wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
@@ -62,26 +62,26 @@ function openMagazine(magazineId) {
     for (let i = 1; i <= magazine.pages; i++) {
         const page = document.createElement('div');
         page.className = 'page';
-        page.innerHTML = `<img src="books/${magazine.folder}/${i}.jpg" alt="Page ${i}">`;
+        page.innerHTML = `<img src="books/${magazine.folder}/${i}.jpg" alt="Page ${i}" loading="lazy">`;
         container.appendChild(page);
     }
     
     try {
         // Initialize PageFlip
         pageFlip = new St.PageFlip(container, {
-            width: 679,         // Single page width
-            height: 1004,       // Single page height
-            size: "stretch",    // Required by library logic
+            width: 679,         
+            height: 1004,       
+            size: "stretch",    
             minWidth: 300,
             maxWidth: 679,
             minHeight: 400,
             maxHeight: 1004,
             showCover: true,
-            flippingTime: 700,
-            usePortrait: true,  // THIS ALLOWS 1-PAGE VIEW ON MOBILE
+            flippingTime: 450,  // Sped up from 700 to 450 for snappier feel
+            usePortrait: true,  
             startPage: 0,
             drawShadow: true,
-            maxShadowOpacity: 0.4,
+            maxShadowOpacity: 0.3, // Lowered shadow opacity to reduce GPU load
             showPageCorners: true,
             disableFlipByClick: false,
             mobileScrollSupport: true,
@@ -98,42 +98,55 @@ function openMagazine(magazineId) {
         pageFlip.on('flip', (e) => {
             const currentPage = e.data + 1;
             let displayPage;
-            
-            // Logic to handle the counter based on 1-page vs 2-page view
             if (pageFlip.getOrientation() === 'portrait') {
-                displayPage = currentPage; // Mobile: showing 1 page
+                displayPage = currentPage;
             } else {
                 displayPage = (currentPage === 1 || currentPage >= magazine.pages) 
                     ? currentPage 
-                    : `${currentPage}-${currentPage + 1}`; // Laptop: showing spread
+                    : `${currentPage}-${currentPage + 1}`; 
             }
             document.getElementById('page-counter').innerText = `${displayPage} / ${magazine.pages}`;
         });
 
         // ==========================================
-        // GLOBAL SWIPE GESTURE LOGIC
+        // ANTI-LAG SWIPE GESTURE LOGIC
         // ==========================================
         let touchstartX = 0;
+        let touchstartY = 0;
         let touchendX = 0;
+        let touchendY = 0;
+        let isAnimating = false;
+
+        // Lock swipes while page is turning to prevent lag-spikes
+        pageFlip.on('changeState', (e) => {
+            isAnimating = (e.data !== 'read'); 
+        });
 
         flipbookView.addEventListener('touchstart', e => {
             touchstartX = e.changedTouches[0].screenX;
+            touchstartY = e.changedTouches[0].screenY;
         }, { passive: true });
 
         flipbookView.addEventListener('touchend', e => {
+            if (isAnimating || !pageFlip) return; // Prevent swipe if already flipping
+
             touchendX = e.changedTouches[0].screenX;
+            touchendY = e.changedTouches[0].screenY;
             handleSwipe();
         }, { passive: true });
 
         function handleSwipe() {
-            const swipeThreshold = 50; // Minimum swipe distance in pixels
-            if (touchendX < touchstartX - swipeThreshold) {
-                // Swiped Left -> Next Page
-                if(pageFlip) pageFlip.flipNext();
-            }
-            if (touchendX > touchstartX + swipeThreshold) {
-                // Swiped Right -> Previous Page
-                if(pageFlip) pageFlip.flipPrev();
+            const swipeDistX = touchendX - touchstartX;
+            const swipeDistY = touchendY - touchstartY;
+            const swipeThreshold = 40; 
+
+            // Only flip if horizontal distance is greater than vertical distance (prevents scrolling misfires)
+            if (Math.abs(swipeDistX) > swipeThreshold && Math.abs(swipeDistX) > Math.abs(swipeDistY)) {
+                if (swipeDistX < 0) {
+                    pageFlip.flipNext(); // Swiped Left
+                } else {
+                    pageFlip.flipPrev(); // Swiped Right
+                }
             }
         }
 
