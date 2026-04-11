@@ -62,7 +62,7 @@ function openMagazine(magazineId) {
     for (let i = 1; i <= magazine.pages; i++) {
         const page = document.createElement('div');
         page.className = 'page';
-        page.innerHTML = `<img src="books/${magazine.folder}/${i}.jpg" alt="Page ${i}" loading="lazy">`;
+        page.innerHTML = `<img src="books/${magazine.folder}/${i}.jpg" alt="Page ${i}">`;
         container.appendChild(page);
     }
     
