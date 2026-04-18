@@ -22,18 +22,25 @@ function openMagazine(id) {
     const mag = allMagazines.find(m => m.id === id);
     if (!mag) return;
 
+    // 1. Force kill any existing instance before starting
+    if (pageFlip) {
+        pageFlip.destroy();
+        pageFlip = null;
+    }
+
     const view = document.getElementById('flipbook-view');
     view.style.display = 'flex';
     setTimeout(() => view.style.opacity = '1', 50);
 
+    // 2. Wipe the wrapper clean to prevent "double book" ghosting
     const wrapper = document.getElementById('flipbook-wrapper');
-    wrapper.innerHTML = '<div id="magazine"></div>';
+    wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
     const container = document.getElementById('magazine');
 
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
-        p.setAttribute('data-density', 'soft');
+        p.setAttribute('data-density', 'soft'); // Critical for turning logic
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" loading="eager">`;
         container.appendChild(p);
     }
@@ -44,14 +51,13 @@ function openMagazine(id) {
             height: 1358, 
             size: "stretch", 
             showCover: true, 
-            flippingTime: 800, 
+            flippingTime: 1000, 
             usePortrait: true,
             drawShadow: true, 
-            // Light shadow opacity prevents the 'diving' black effect
-            maxShadowOpacity: 0.2, 
+            maxShadowOpacity: 0.3, 
             showPageCorners: false,
             mobileScrollSupport: true,
-            swipeDistance: 20
+            swipeDistance: 30
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
@@ -77,7 +83,11 @@ function closeFlipbook() {
     view.style.opacity = '0';
     setTimeout(() => {
         view.style.display = 'none';
-        if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
+        if (pageFlip) {
+            pageFlip.destroy();
+            pageFlip = null;
+        }
+        // Wipe HTML to prevent the ghost book on next open
         document.getElementById('flipbook-wrapper').innerHTML = '';
     }, 300);
 }
