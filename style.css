@@ -1,8 +1,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #fff; -webkit-tap-highlight-color: transparent; }
-::-webkit-scrollbar { display: none; }
 
-/* Clean Grid without names */
+#grid-view { padding-top: 1rem !important; }
+
 .magazine-card { 
     cursor: pointer; 
     border-radius: 6px; 
@@ -13,10 +13,12 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
 .magazine-card:hover { transform: translateY(-4px); }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
 
-/* 3D Depth Logic */
+/* 3D BOOK ENGINE FIX */
 #magazine { 
     width: 100%; height: 100%; margin: auto; 
     perspective: 3000px;
+    /* Prevents flickering on some mobile browsers */
+    -webkit-perspective: 3000px;
 }
 
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
@@ -25,8 +27,9 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
 .page { 
     background: #fff; width: 100%; height: 100%; overflow: hidden; 
     position: relative;
-    /* FIX: Force browser to render image during flip */
+    /* Force GPU to render the back side of the flip */
     transform-style: preserve-3d !important;
+    -webkit-transform-style: preserve-3d !important;
     backface-visibility: visible !important;
     -webkit-backface-visibility: visible !important;
 }
@@ -34,8 +37,9 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
 .page img { 
     width: 100%; height: 100%; object-fit: contain; display: block; 
     pointer-events: none;
-    /* Keeps image on the surface of the 3D plane */
-    transform: translateZ(1px); 
+    /* This "lifts" the image so it doesn't merge with the background during flip */
+    transform: translateZ(1px);
+    -webkit-transform: translateZ(1px);
 }
 
 /* UI Controls */
@@ -44,7 +48,7 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
     pointer-events: auto !important;
 }
 
-/* Page spine shadow */
+/* Depth Shadows */
 .page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
 .page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, transparent 100%); }
 .page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, transparent 100%); }
