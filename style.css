@@ -1,12 +1,10 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hidden; }
 
-/* Grid View Spacing */
 #grid-view { padding-top: 1rem !important; }
 .magazine-card { cursor: pointer; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s; }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
 
-/* 3D ENGINE FIX */
 #flipbook-view {
     position: fixed;
     inset: 0;
@@ -25,7 +23,7 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
     align-items: center;
     justify-content: center;
     padding: 20px;
-    /* Allows the 3D flip to 'pop' out of the container without clipping */
+    /* IMPORTANT: Allows the 3D rotation to pop out of the box */
     overflow: visible !important; 
 }
 
@@ -33,9 +31,8 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
     width: 100%; height: 100%; margin: auto; 
     max-height: 80vh; 
     perspective: 3000px;
-    /* Lifts the whole book toward the user */
+    /* Pulls book toward camera to prevent clipping with background */
     transform: translateZ(50px);
-    -webkit-transform: translateZ(50px);
 }
 
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
@@ -45,7 +42,7 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
     background: #fff; width: 100%; height: 100%; 
     overflow: visible !important; 
     position: relative;
-    /* CRITICAL: Keeps both sides of the page rendered during turn */
+    /* FIX FOR SHADOW-ONLY TURN: */
     transform-style: preserve-3d !important;
     backface-visibility: visible !important;
     -webkit-backface-visibility: visible !important;
@@ -53,13 +50,18 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
 
 .page img { 
     width: 100%; height: 100%; object-fit: contain; display: block; 
-    /* This ensures the image is the top layer of the flipping sheet */
+    /* Lift image off the 'paper' so it never clips with the shadow */
     transform: translateZ(2px);
+    pointer-events: none;
 }
 
-/* UI Controls */
 #btn-prev, #btn-next, #close-flipbook {
     cursor: pointer !important;
     pointer-events: auto !important;
     z-index: 2000 !important;
 }
+
+/* Spine Shadow */
+.page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, transparent 100%); }
