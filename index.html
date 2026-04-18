@@ -22,11 +22,15 @@
         <div id="magazine-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"></div>
     </div>
 
-    <div id="flipbook-view" class="fixed inset-0 z-[999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+    <div id="flipbook-view" class="fixed inset-0 z-[1000] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-black/95 backdrop-blur-md -z-10"></div>
-        <button id="close-flipbook" class="absolute top-6 right-6 text-white/60 hover:text-white text-3xl z-[1001] cursor-pointer">✕</button>
-        <div id="flipbook-wrapper" class="w-full flex-grow flex items-center justify-center p-4 overflow-hidden"></div>
-        <div class="mb-10 z-[1001]">
+        
+        <button id="close-flipbook" class="absolute top-6 right-6 text-white/60 hover:text-white text-3xl z-[2001] cursor-pointer">✕</button>
+        
+        <div id="flipbook-wrapper" class="w-full flex-grow flex items-center justify-center p-4 z-[1100]">
+            </div>
+
+        <div class="mb-10 z-[2001]">
             <div class="h-12 px-6 bg-transparent flex items-center gap-8">
                 <button id="btn-prev" class="text-white font-bold hover:text-orange-500 transition-colors uppercase text-xs tracking-widest cursor-pointer">Prev</button>
                 <span id="page-counter" class="text-white/50 font-bold text-[11px] tracking-[0.2em]">0 / 0</span>
