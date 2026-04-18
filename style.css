@@ -1,8 +1,9 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #fff; -webkit-tap-highlight-color: transparent; }
+::-webkit-scrollbar { display: none; }
 
+/* Clean Header & Grid */
 #grid-view { padding-top: 1rem !important; }
-
 .magazine-card { 
     cursor: pointer; 
     border-radius: 6px; 
@@ -13,21 +14,26 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
 .magazine-card:hover { transform: translateY(-4px); }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
 
-/* 3D BOOK ENGINE FIX */
+/* 3D ENGINE FIX: Prevents clipping and flickering */
 #magazine { 
     width: 100%; height: 100%; margin: auto; 
-    perspective: 3000px;
-    /* Prevents flickering on some mobile browsers */
-    -webkit-perspective: 3000px;
+    perspective: 4000px;
+    -webkit-perspective: 4000px;
+    /* Lift book off the background surface */
+    transform: translateZ(10px);
+    -webkit-transform: translateZ(10px);
+    /* CRITICAL: Allow flipping pages to move outside the container box */
+    overflow: visible !important; 
 }
 
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
 @media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
 
 .page { 
-    background: #fff; width: 100%; height: 100%; overflow: hidden; 
+    background: #fff; width: 100%; height: 100%; 
+    /* Allows the 'swing' of the page to be visible */
+    overflow: visible !important; 
     position: relative;
-    /* Force GPU to render the back side of the flip */
     transform-style: preserve-3d !important;
     -webkit-transform-style: preserve-3d !important;
     backface-visibility: visible !important;
@@ -37,20 +43,21 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; }
 .page img { 
     width: 100%; height: 100%; object-fit: contain; display: block; 
     pointer-events: none;
-    /* This "lifts" the image so it doesn't merge with the background during flip */
-    transform: translateZ(1px);
-    -webkit-transform: translateZ(1px);
+    /* Push image to the very top of the 3D stack */
+    transform: translateZ(5px);
+    -webkit-transform: translateZ(5px);
 }
 
-/* UI Controls */
+/* UI Controls: Highest Layer */
 #btn-prev, #btn-next, #close-flipbook {
     cursor: pointer !important;
     pointer-events: auto !important;
+    z-index: 2000 !important;
 }
 
-/* Depth Shadows */
+/* Professional Spine Shadow */
 .page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
-.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, transparent 100%); }
-.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, transparent 100%); }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.12) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.12) 0%, transparent 100%); }
 
 #flipbook-view { transition: opacity 0.3s ease-in-out; }
