@@ -6,7 +6,7 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (e) { console.error("Data Load Error:", e); }
+    } catch (e) { console.error(e); }
 }
 
 function renderMagazines(mags) {
@@ -23,32 +23,32 @@ function openMagazine(id) {
     if (!mag) return;
 
     const view = document.getElementById('flipbook-view');
-    view.classList.replace('hidden', 'flex');
+    view.style.display = 'flex';
     setTimeout(() => view.style.opacity = '1', 50);
 
-    // Force Re-create container to fix "empty book" glitch
     const wrapper = document.getElementById('flipbook-wrapper');
-    wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
+    wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
 
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
         p.setAttribute('data-density', 'soft');
-        p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" loading="eager" alt="Page ${i}">`;
+        p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" loading="eager">`;
         container.appendChild(p);
     }
 
     try {
-        const tw = 1004, th = 1358;
         pageFlip = new St.PageFlip(container, {
-            width: tw, height: th, size: "stretch",
-            minWidth: 300, maxWidth: tw, minHeight: 400, maxHeight: th,
+            width: 1004, 
+            height: 1358, 
+            size: "stretch", 
             showCover: true, 
-            flippingTime: 1000, 
+            flippingTime: 800, 
             usePortrait: true,
             drawShadow: true, 
-            maxShadowOpacity: 0.2, // Lightened shadow so content stays visible
+            // Light shadow opacity prevents the 'diving' black effect
+            maxShadowOpacity: 0.2, 
             showPageCorners: false,
             mobileScrollSupport: true,
             swipeDistance: 20
@@ -66,29 +66,18 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        // Re-bind controls to the NEW instance
-        document.getElementById('btn-prev').onclick = (e) => {
-            e.stopPropagation();
-            if (pageFlip) pageFlip.flipPrev();
-        };
-
-        document.getElementById('btn-next').onclick = (e) => {
-            e.stopPropagation();
-            if (pageFlip) pageFlip.flipNext();
-        };
+        document.getElementById('btn-prev').onclick = () => pageFlip.flipPrev();
+        document.getElementById('btn-next').onclick = () => pageFlip.flipNext();
         
-    } catch (e) { console.error("Init Error:", e); }
+    } catch (e) { console.error(e); }
 }
 
 function closeFlipbook() {
     const view = document.getElementById('flipbook-view');
     view.style.opacity = '0';
     setTimeout(() => {
-        view.classList.replace('flex', 'hidden');
-        if (pageFlip) {
-            pageFlip.destroy();
-            pageFlip = null;
-        }
+        view.style.display = 'none';
+        if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
         document.getElementById('flipbook-wrapper').innerHTML = '';
     }, 300);
 }
