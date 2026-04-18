@@ -22,7 +22,7 @@ function openMagazine(id) {
     const mag = allMagazines.find(m => m.id === id);
     if (!mag) return;
 
-    // 1. Force kill any existing instance before starting
+    // 1. CLEAR PREVIOUS BOOK (Stop double-page glitch)
     if (pageFlip) {
         pageFlip.destroy();
         pageFlip = null;
@@ -32,7 +32,7 @@ function openMagazine(id) {
     view.style.display = 'flex';
     setTimeout(() => view.style.opacity = '1', 50);
 
-    // 2. Wipe the wrapper clean to prevent "double book" ghosting
+    // 2. RE-CREATE CONTAINER
     const wrapper = document.getElementById('flipbook-wrapper');
     wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
     const container = document.getElementById('magazine');
@@ -40,7 +40,7 @@ function openMagazine(id) {
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
-        p.setAttribute('data-density', 'soft'); // Critical for turning logic
+        p.setAttribute('data-density', 'soft');
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" loading="eager">`;
         container.appendChild(p);
     }
@@ -54,7 +54,7 @@ function openMagazine(id) {
             flippingTime: 1000, 
             usePortrait: true,
             drawShadow: true, 
-            maxShadowOpacity: 0.3, 
+            maxShadowOpacity: 0.2, // Lower shadow prevents "black-out" pages
             showPageCorners: false,
             mobileScrollSupport: true,
             swipeDistance: 30
@@ -72,8 +72,8 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        document.getElementById('btn-prev').onclick = () => pageFlip.flipPrev();
-        document.getElementById('btn-next').onclick = () => pageFlip.flipNext();
+        document.getElementById('btn-prev').onclick = () => { if(pageFlip) pageFlip.flipPrev(); };
+        document.getElementById('btn-next').onclick = () => { if(pageFlip) pageFlip.flipNext(); };
         
     } catch (e) { console.error(e); }
 }
@@ -87,8 +87,7 @@ function closeFlipbook() {
             pageFlip.destroy();
             pageFlip = null;
         }
-        // Wipe HTML to prevent the ghost book on next open
-        document.getElementById('flipbook-wrapper').innerHTML = '';
+        document.getElementById('flipbook-wrapper').innerHTML = ''; // Wipe memory
     }, 300);
 }
 
