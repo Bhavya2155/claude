@@ -9,18 +9,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-white min-h-screen">
-
     <div id="grid-view" class="container mx-auto px-4 py-2 max-w-7xl">
         <header class="mb-6 text-center">
             <div class="flex justify-center mb-4 mt-2"><img src="logo.png" alt="Logo" class="h-10 object-contain"></div>
-            <div class="border-b border-gray-100 pb-2 text-left">
-                <h1 class="text-xl font-bold text-red-700 uppercase">Magazines</h1>
-            </div>
+            <div class="border-b border-gray-100 pb-2 text-left"><h1 class="text-xl font-bold text-red-700 uppercase">Magazines</h1></div>
         </header>
         <div id="magazine-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"></div>
     </div>
 
-    <div id="flipbook-view" class="fixed inset-0 z-[1000] hidden flex-col items-center justify-between transition-opacity duration-300">
+    <div id="flipbook-view">
         <button id="close-flipbook" class="absolute top-6 right-6 text-white/60 text-3xl">✕</button>
         <div id="flipbook-wrapper"></div>
         <div class="mb-10 w-full flex justify-center">
@@ -31,7 +28,6 @@
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
