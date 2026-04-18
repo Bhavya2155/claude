@@ -13,7 +13,7 @@ function renderMagazines(mags) {
     const grid = document.getElementById('magazine-list');
     grid.innerHTML = mags.map((mag) => `
         <div class="magazine-card" onclick="openMagazine(${mag.id})">
-            <img src="${mag.coverImage}" alt="Magazine Cover">
+            <img src="${mag.coverImage}" alt="Cover">
         </div>
     `).join('');
 }
@@ -26,16 +26,15 @@ function openMagazine(id) {
     view.classList.replace('hidden', 'flex');
     setTimeout(() => view.style.opacity = '1', 50);
 
+    // Force Re-create container to fix "empty book" glitch
     const wrapper = document.getElementById('flipbook-wrapper');
     wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
     const container = document.getElementById('magazine');
 
-    // Dynamically creating pages
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
         p.setAttribute('data-density', 'soft');
-        // Eager loading prevents white flashes during the turn
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" loading="eager" alt="Page ${i}">`;
         container.appendChild(p);
     }
@@ -49,12 +48,10 @@ function openMagazine(id) {
             flippingTime: 1000, 
             usePortrait: true,
             drawShadow: true, 
-            maxShadowOpacity: 0.4, 
+            maxShadowOpacity: 0.2, // Lightened shadow so content stays visible
             showPageCorners: false,
             mobileScrollSupport: true,
-            swipeDistance: 20,
-            startPage: 0,
-            clickEventForward: false
+            swipeDistance: 20
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
@@ -69,7 +66,7 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        // RE-BIND BUTTONS
+        // Re-bind controls to the NEW instance
         document.getElementById('btn-prev').onclick = (e) => {
             e.stopPropagation();
             if (pageFlip) pageFlip.flipPrev();
@@ -80,7 +77,7 @@ function openMagazine(id) {
             if (pageFlip) pageFlip.flipNext();
         };
         
-    } catch (e) { console.error("PageFlip Error:", e); }
+    } catch (e) { console.error("Init Error:", e); }
 }
 
 function closeFlipbook() {
