@@ -1,10 +1,13 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hidden; }
 
+/* Remove extra space above logo */
 #grid-view { padding-top: 1rem !important; }
+
 .magazine-card { cursor: pointer; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s; }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
 
+/* 3D Viewer Styles */
 #flipbook-view {
     position: fixed;
     inset: 0;
@@ -23,16 +26,17 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
     align-items: center;
     justify-content: center;
     padding: 20px;
-    /* IMPORTANT: Allows the 3D rotation to pop out of the box */
+    /* CRITICAL: Allow 3D elements to move outside the container */
     overflow: visible !important; 
 }
 
 #magazine { 
     width: 100%; height: 100%; margin: auto; 
     max-height: 80vh; 
-    perspective: 3000px;
-    /* Pulls book toward camera to prevent clipping with background */
-    transform: translateZ(50px);
+    perspective: 3500px;
+    /* Lift book off the background */
+    transform: translateZ(100px);
+    -webkit-transform: translateZ(100px);
 }
 
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
@@ -50,18 +54,20 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
 
 .page img { 
     width: 100%; height: 100%; object-fit: contain; display: block; 
-    /* Lift image off the 'paper' so it never clips with the shadow */
-    transform: translateZ(2px);
     pointer-events: none;
+    /* Force GPU rendering to stop flickering/disappearing */
+    transform: translateZ(2px);
+    -webkit-transform: translateZ(2px);
 }
 
+/* UI Clicks */
 #btn-prev, #btn-next, #close-flipbook {
     cursor: pointer !important;
     pointer-events: auto !important;
     z-index: 2000 !important;
 }
 
-/* Spine Shadow */
+/* Spine shadow for depth */
 .page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
-.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, transparent 100%); }
-.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, transparent 100%); }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.12) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.12) 0%, transparent 100%); }
