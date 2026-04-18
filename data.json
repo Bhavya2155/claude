@@ -19,6 +19,136 @@
       "year": 2025,
       "month": "March",
       "coverImage": "books/book2/1.jpg"
+    },
+    {
+      "id": 3,
+      "title": "Book 3 Title",
+      "folder": "book3",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "January",
+      "coverImage": "books/book3/1.jpg"
+    },
+    {
+      "id": 4,
+      "title": "Book 4 Title",
+      "folder": "book4",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "February",
+      "coverImage": "books/book4/1.jpg"
+    },
+    {
+      "id": 5,
+      "title": "Book 5 Title",
+      "folder": "book5",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "March",
+      "coverImage": "books/book5/1.jpg"
+    },
+    {
+      "id": 6,
+      "title": "Book 6 Title",
+      "folder": "book6",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "April",
+      "coverImage": "books/book6/1.jpg"
+    },
+    {
+      "id": 7,
+      "title": "Book 7 Title",
+      "folder": "book7",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "May",
+      "coverImage": "books/book7/1.jpg"
+    },
+    {
+      "id": 8,
+      "title": "Book 8 Title",
+      "folder": "book8",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "June",
+      "coverImage": "books/book8/1.jpg"
+    },
+    {
+      "id": 9,
+      "title": "Book 9 Title",
+      "folder": "book9",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "July",
+      "coverImage": "books/book9/1.jpg"
+    },
+    {
+      "id": 10,
+      "title": "Book 10 Title",
+      "folder": "book10",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "August",
+      "coverImage": "books/book10/1.jpg"
+    },
+    {
+      "id": 11,
+      "title": "Book 11 Title",
+      "folder": "book11",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "September",
+      "coverImage": "books/book11/1.jpg"
+    },
+    {
+      "id": 12,
+      "title": "Book 12 Title",
+      "folder": "book12",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "October",
+      "coverImage": "books/book12/1.jpg"
+    },
+    {
+      "id": 13,
+      "title": "Book 13 Title",
+      "folder": "book13",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "November",
+      "coverImage": "books/book13/1.jpg"
+    },
+    {
+      "id": 14,
+      "title": "Book 14 Title",
+      "folder": "book14",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "December",
+      "coverImage": "books/book14/1.jpg"
+    },
+    {
+      "id": 15,
+      "title": "Book 15 Title",
+      "folder": "book15",
+      "pages": 16,
+      "language": "English",
+      "year": 2025,
+      "month": "January",
+      "coverImage": "books/book15/1.jpg"
     }
   ]
 }
