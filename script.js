@@ -11,7 +11,6 @@ async function loadMagazineData() {
 
 function renderMagazines(mags) {
     const grid = document.getElementById('magazine-list');
-    // REMOVED: Names/Titles below the images
     grid.innerHTML = mags.map((mag) => `
         <div class="magazine-card" onclick="openMagazine(${mag.id})">
             <img src="${mag.coverImage}" alt="Magazine Cover">
@@ -31,10 +30,12 @@ function openMagazine(id) {
     wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
     const container = document.getElementById('magazine');
 
+    // Dynamically creating pages
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
         p.setAttribute('data-density', 'soft');
+        // Eager loading prevents white flashes during the turn
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" loading="eager" alt="Page ${i}">`;
         container.appendChild(p);
     }
@@ -51,7 +52,9 @@ function openMagazine(id) {
             maxShadowOpacity: 0.4, 
             showPageCorners: false,
             mobileScrollSupport: true,
-            swipeDistance: 20
+            swipeDistance: 20,
+            startPage: 0,
+            clickEventForward: false
         });
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
@@ -66,6 +69,7 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
+        // RE-BIND BUTTONS
         document.getElementById('btn-prev').onclick = (e) => {
             e.stopPropagation();
             if (pageFlip) pageFlip.flipPrev();
