@@ -22,17 +22,13 @@ function openMagazine(id) {
     const mag = allMagazines.find(m => m.id === id);
     if (!mag) return;
 
-    // 1. CLEAR PREVIOUS BOOK (Stop double-page glitch)
-    if (pageFlip) {
-        pageFlip.destroy();
-        pageFlip = null;
-    }
+    // Hard reset old book instance
+    if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
 
     const view = document.getElementById('flipbook-view');
     view.style.display = 'flex';
     setTimeout(() => view.style.opacity = '1', 50);
 
-    // 2. RE-CREATE CONTAINER
     const wrapper = document.getElementById('flipbook-wrapper');
     wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
     const container = document.getElementById('magazine');
@@ -54,7 +50,7 @@ function openMagazine(id) {
             flippingTime: 1000, 
             usePortrait: true,
             drawShadow: true, 
-            maxShadowOpacity: 0.2, // Lower shadow prevents "black-out" pages
+            maxShadowOpacity: 0.15, // Lightened shadow stops the 'under the shadow' look
             showPageCorners: false,
             mobileScrollSupport: true,
             swipeDistance: 30
@@ -62,10 +58,7 @@ function openMagazine(id) {
 
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-        pageFlip.on('init', () => {
-            document.getElementById('page-counter').innerText = `1 / ${mag.pages}`;
-        });
-
+        pageFlip.on('init', () => document.getElementById('page-counter').innerText = `1 / ${mag.pages}`);
         pageFlip.on('flip', (e) => {
             const cur = e.data + 1;
             let disp = (pageFlip.getOrientation() === 'portrait' || cur === 1 || cur >= mag.pages) ? cur : `${cur}-${cur+1}`;
@@ -83,11 +76,8 @@ function closeFlipbook() {
     view.style.opacity = '0';
     setTimeout(() => {
         view.style.display = 'none';
-        if (pageFlip) {
-            pageFlip.destroy();
-            pageFlip = null;
-        }
-        document.getElementById('flipbook-wrapper').innerHTML = ''; // Wipe memory
+        if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
+        document.getElementById('flipbook-wrapper').innerHTML = '';
     }, 300);
 }
 
