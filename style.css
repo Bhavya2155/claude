@@ -1,13 +1,12 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hidden; }
 
-/* Remove extra space above logo */
+/* Grid View Styles */
 #grid-view { padding-top: 1rem !important; }
-
 .magazine-card { cursor: pointer; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s; }
 .magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
 
-/* 3D Viewer Styles */
+/* 3D VIEWER FIX */
 #flipbook-view {
     position: fixed;
     inset: 0;
@@ -26,17 +25,18 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
     align-items: center;
     justify-content: center;
     padding: 20px;
-    /* CRITICAL: Allow 3D elements to move outside the container */
+    /* CRITICAL: Allow the page to swing 'outside' the container during the flip */
     overflow: visible !important; 
 }
 
 #magazine { 
     width: 100%; height: 100%; margin: auto; 
     max-height: 80vh; 
-    perspective: 3500px;
-    /* Lift book off the background */
-    transform: translateZ(100px);
-    -webkit-transform: translateZ(100px);
+    perspective: 3000px;
+    /* Lifts the book off the background so flipping pages don't go 'under' the screen */
+    transform: translateZ(50px);
+    -webkit-transform: translateZ(50px);
+    overflow: visible !important;
 }
 
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
@@ -46,7 +46,7 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
     background: #fff; width: 100%; height: 100%; 
     overflow: visible !important; 
     position: relative;
-    /* FIX FOR SHADOW-ONLY TURN: */
+    /* Forces the browser to keep both sides visible during the turn */
     transform-style: preserve-3d !important;
     backface-visibility: visible !important;
     -webkit-backface-visibility: visible !important;
@@ -54,20 +54,20 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow: hid
 
 .page img { 
     width: 100%; height: 100%; object-fit: contain; display: block; 
+    /* Lifts the image above the paper so it doesn't merge with the shadow */
+    transform: translateZ(5px);
+    -webkit-transform: translateZ(5px);
     pointer-events: none;
-    /* Force GPU rendering to stop flickering/disappearing */
-    transform: translateZ(2px);
-    -webkit-transform: translateZ(2px);
 }
 
-/* UI Clicks */
+/* UI Controls */
 #btn-prev, #btn-next, #close-flipbook {
     cursor: pointer !important;
     pointer-events: auto !important;
     z-index: 2000 !important;
 }
 
-/* Spine shadow for depth */
+/* Spine Shadow */
 .page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
-.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.12) 0%, transparent 100%); }
-.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.12) 0%, transparent 100%); }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.1) 0%, transparent 100%); }
