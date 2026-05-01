@@ -9,25 +9,40 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-white min-h-screen">
-    <div id="grid-view" class="container mx-auto px-4 py-2 max-w-7xl">
-        <header class="mb-6 text-center">
-            <div class="flex justify-center mb-4 mt-2"><img src="logo.png" alt="Logo" class="h-10 object-contain"></div>
-            <div class="border-b border-gray-100 pb-2 text-left"><h1 class="text-xl font-bold text-red-700 uppercase">Magazines</h1></div>
+
+    <!-- Homepage Grid -->
+    <div id="grid-view" class="container mx-auto px-4 py-6 max-w-7xl">
+        <header class="mb-10 border-b border-gray-100 pb-4">
+            <img src="logo.png" alt="Logo" class="h-10 object-contain mb-4">
+            <h1 class="text-2xl font-bold text-red-700 uppercase tracking-tight">Magazines</h1>
         </header>
-        <div id="magazine-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"></div>
+        <div id="magazine-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+            <!-- Dynamic Content -->
+        </div>
     </div>
 
-    <div id="flipbook-view">
-        <button id="close-flipbook" class="absolute top-6 right-6 text-white/60 text-3xl">✕</button>
-        <div id="flipbook-wrapper"></div>
-        <div class="mb-10 w-full flex justify-center">
-            <div class="h-12 px-6 flex items-center gap-8">
-                <button id="btn-prev" class="text-white font-bold hover:text-orange-500 uppercase text-xs">Prev</button>
-                <span id="page-counter" class="text-white/50 font-bold text-[11px]">0 / 0</span>
-                <button id="btn-next" class="bg-orange-500 text-white px-8 py-2 rounded-md font-bold text-xs uppercase">Next</button>
+    <!-- Full-Screen 3D Viewer -->
+    <div id="flipbook-view" class="fixed inset-0 z-[9999] hidden flex-col items-center justify-between">
+        <!-- Solid Black Background to hide the home screen -->
+        <div class="absolute inset-0 bg-black -z-10"></div>
+        
+        <button id="close-flipbook" class="absolute top-6 right-6 text-white/70 hover:text-white text-4xl z-[10001] cursor-pointer p-2">✕</button>
+        
+        <!-- 3D Perspective Wrapper -->
+        <div id="flipbook-wrapper" class="w-full flex-grow flex items-center justify-center p-4">
+            <!-- Magazine Injected Here -->
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="mb-12 z-[10001] w-full flex justify-center">
+            <div class="flex items-center gap-12">
+                <button id="btn-prev" class="text-white font-black hover:text-orange-500 uppercase text-sm tracking-widest cursor-pointer transition-all">Prev</button>
+                <span id="page-counter" class="text-white/40 font-mono text-xs tracking-widest">0 / 0</span>
+                <button id="btn-next" class="bg-orange-600 text-white px-10 py-3 rounded-lg font-black hover:bg-orange-500 transition-all active:scale-95 text-sm uppercase tracking-widest cursor-pointer shadow-2xl">Next</button>
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
