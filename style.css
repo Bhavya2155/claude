@@ -1,42 +1,32 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #fff; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+body { background: #fff; -webkit-tap-highlight-color: transparent; }
 
-/* Grid View Stability */
-#grid-view { padding-top: 1rem !important; }
-#magazine-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem;
-}
-
+/* Home Grid Stability */
 .magazine-card {
     cursor: pointer;
     border-radius: 8px;
-    background: #f3f3f3; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    aspect-ratio: 3/4; /* Keeps grid aligned even if images are missing */
-    transition: transform 0.2s;
+    overflow: hidden;
+    background: #f8f8f8;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease;
+    aspect-ratio: 3/4; /* Keeps cards aligned even if images break */
 }
+.magazine-card:hover { transform: translateY(-5px); }
 .magazine-card img { width: 100%; height: 100%; object-fit: cover; }
 
-/* 3D Engine Fix */
+/* 3D ENGINE FIX */
 #flipbook-wrapper {
     width: 100%;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    height: 100%;
     overflow: visible !important; 
 }
 
 #magazine { 
-    width: 100%; height: 100%; 
-    perspective: 3000px;
-    /* Lift the book toward the user to stop clipping */
-    transform: translateZ(50px);
-    -webkit-transform: translateZ(50px);
+    width: 100%; height: 100%; margin: auto; 
+    max-height: 82vh; 
+    perspective: 4000px; /* High perspective for 3D depth */
+    transform: translateZ(100px); /* Lift book off background */
+    -webkit-transform: translateZ(100px);
 }
 
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
@@ -51,7 +41,17 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; overflow-x: h
 }
 
 .page img { 
-    width: 100%; height: 100%; object-fit: contain; 
-    /* Keeps image on top of the flipping surface */
+    width: 100%; height: 100%; object-fit: contain; display: block; 
+    /* Pull image to top of the stack during flip */
     transform: translateZ(5px);
+    -webkit-transform: translateZ(5px);
+    pointer-events: none;
 }
+
+/* Spine Shadow */
+.page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.1) 0%, transparent 100%); }
+
+/* Hide scrollbar when book is open */
+body.no-scroll { overflow: hidden; }
