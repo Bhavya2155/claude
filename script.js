@@ -6,14 +6,14 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (e) { console.error("JSON Error: Are you running a local server?"); }
+    } catch (e) { console.error("Error: Local server required to load JSON."); }
 }
 
 function renderMagazines(mags) {
     const grid = document.getElementById('magazine-list');
     grid.innerHTML = mags.map((mag) => `
         <div class="magazine-card" onclick="openMagazine(${mag.id})">
-            <img src="${mag.coverImage}" alt="Magazine" onerror="this.style.display='none'">
+            <img src="${mag.coverImage}" alt="Magazine" onerror="this.style.opacity='0'">
         </div>
     `).join('');
 }
@@ -22,34 +22,36 @@ function openMagazine(id) {
     const mag = allMagazines.find(m => m.id === id);
     if (!mag) return;
 
-    // 1. Hard Wipe memory
+    // Reset logic
     if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
 
-    // 2. Show the Overlay & Lock Scroll
     const view = document.getElementById('flipbook-view');
-    view.classList.replace('hidden', 'flex');
+    view.style.display = 'flex';
     document.body.classList.add('no-scroll');
+    setTimeout(() => view.style.opacity = '1', 50);
 
-    // 3. Inject Container
     const wrapper = document.getElementById('flipbook-wrapper');
-    wrapper.innerHTML = '<div id="magazine" class="st-page-flip"></div>';
+    wrapper.innerHTML = '<div id="magazine"></div>';
     const container = document.getElementById('magazine');
 
-    // 4. Create Pages
     for (let i = 1; i <= mag.pages; i++) {
         const p = document.createElement('div');
         p.className = 'page';
-        p.setAttribute('data-density', 'soft');
         p.innerHTML = `<img src="books/${mag.folder}/${i}.jpg" loading="eager">`;
         container.appendChild(p);
     }
 
     try {
         pageFlip = new St.PageFlip(container, {
-            width: 1004, height: 1358, size: "stretch",
-            showCover: true, flippingTime: 1000, 
-            usePortrait: true, drawShadow: true,
-            maxShadowOpacity: 0.15, mobileScrollSupport: true,
+            width: 1004, 
+            height: 1358, 
+            size: "stretch", // FIX: Scales book down to fit 85vh container
+            showCover: true, 
+            flippingTime: 1000, 
+            usePortrait: true, 
+            drawShadow: true,
+            maxShadowOpacity: 0.15,
+            mobileScrollSupport: true,
             swipeDistance: 30
         });
 
@@ -65,19 +67,21 @@ function openMagazine(id) {
             document.getElementById('page-counter').innerText = `${disp} / ${mag.pages}`;
         });
 
-        document.getElementById('btn-prev').onclick = () => { if(pageFlip) pageFlip.flipPrev(); };
-        document.getElementById('btn-next').onclick = () => { if(pageFlip) pageFlip.flipNext(); };
+        document.getElementById('btn-prev').onclick = () => pageFlip.flipPrev();
+        document.getElementById('btn-next').onclick = () => pageFlip.flipNext();
         
-    } catch (e) { console.error("PageFlip Error", e); }
+    } catch (e) { console.error(e); }
 }
 
 function closeFlipbook() {
     const view = document.getElementById('flipbook-view');
-    view.classList.replace('flex', 'hidden');
+    view.style.opacity = '0';
     document.body.classList.remove('no-scroll');
-    
-    if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
-    document.getElementById('flipbook-wrapper').innerHTML = '';
+    setTimeout(() => {
+        view.style.display = 'none';
+        if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
+        document.getElementById('flipbook-wrapper').innerHTML = '';
+    }, 300);
 }
 
 document.getElementById('close-flipbook').onclick = closeFlipbook;
