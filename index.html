@@ -10,27 +10,23 @@
 </head>
 <body class="bg-white min-h-screen">
 
-    <div id="grid-view" class="container mx-auto px-4 max-w-7xl">
-        <header class="py-6 border-b mb-6">
+    <div id="grid-view" class="container mx-auto px-4 py-6 max-w-7xl">
+        <header class="mb-10 border-b pb-4">
             <img src="logo.png" alt="Logo" class="h-10 mb-4 block">
             <h1 class="text-xl font-bold text-red-700 uppercase">Magazines</h1>
         </header>
         <div id="magazine-list"></div>
     </div>
 
-    <!-- The Modal Overlay -->
+    <!-- Modal View -->
     <div id="flipbook-view">
-        <button id="close-flipbook" class="absolute top-6 right-6 text-white/50 text-4xl p-2">✕</button>
-        
-        <div id="flipbook-wrapper">
-            <!-- Magazine container is injected here -->
-        </div>
-
+        <button id="close-flipbook" class="absolute top-6 right-6 text-white/50 text-4xl">✕</button>
+        <div id="flipbook-wrapper"></div>
         <div class="mb-10 w-full flex justify-center z-[10001]">
             <div class="flex items-center gap-10">
                 <button id="btn-prev" class="text-white font-bold uppercase text-xs tracking-widest">Prev</button>
                 <span id="page-counter" class="text-white/30 font-mono text-xs">0 / 0</span>
-                <button id="btn-next" class="bg-orange-600 text-white px-10 py-3 rounded font-bold text-xs uppercase shadow-lg">Next</button>
+                <button id="btn-next" class="bg-orange-600 text-white px-10 py-3 rounded font-bold text-xs uppercase">Next</button>
             </div>
         </div>
     </div>
