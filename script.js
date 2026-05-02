@@ -6,7 +6,7 @@ async function loadMagazineData() {
         const data = await response.json();
         allMagazines = data.magazines;
         renderMagazines(allMagazines);
-    } catch (e) { console.error("Error: Local server required to load JSON."); }
+    } catch (e) { console.error("Data load failed."); }
 }
 
 function renderMagazines(mags) {
@@ -22,13 +22,11 @@ function openMagazine(id) {
     const mag = allMagazines.find(m => m.id === id);
     if (!mag) return;
 
-    // Reset logic
     if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
 
     const view = document.getElementById('flipbook-view');
     view.style.display = 'flex';
     document.body.classList.add('no-scroll');
-    setTimeout(() => view.style.opacity = '1', 50);
 
     const wrapper = document.getElementById('flipbook-wrapper');
     wrapper.innerHTML = '<div id="magazine"></div>';
@@ -45,12 +43,12 @@ function openMagazine(id) {
         pageFlip = new St.PageFlip(container, {
             width: 1004, 
             height: 1358, 
-            size: "stretch", // FIX: Scales book down to fit 85vh container
+            size: "stretch", 
             showCover: true, 
-            flippingTime: 1000, 
-            usePortrait: true, 
-            drawShadow: true,
-            maxShadowOpacity: 0.15,
+            flippingTime: 1200, // Slightly slower for smoother GPU arc
+            usePortrait: true,
+            drawShadow: true, 
+            maxShadowOpacity: 0.1, // Lighter shadow prevents 'diving' look
             mobileScrollSupport: true,
             swipeDistance: 30
         });
@@ -75,13 +73,10 @@ function openMagazine(id) {
 
 function closeFlipbook() {
     const view = document.getElementById('flipbook-view');
-    view.style.opacity = '0';
+    view.style.display = 'none';
     document.body.classList.remove('no-scroll');
-    setTimeout(() => {
-        view.style.display = 'none';
-        if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
-        document.getElementById('flipbook-wrapper').innerHTML = '';
-    }, 300);
+    if (pageFlip) { pageFlip.destroy(); pageFlip = null; }
+    document.getElementById('flipbook-wrapper').innerHTML = '';
 }
 
 document.getElementById('close-flipbook').onclick = closeFlipbook;
