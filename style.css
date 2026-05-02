@@ -1,7 +1,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #fff; -webkit-tap-highlight-color: transparent; font-family: sans-serif; }
+body { background: #fff; -webkit-tap-highlight-color: transparent; }
 
-/* 1. Home Screen Grid Fix */
+/* 1. Home Grid Stability */
 #grid-view { padding-top: 1rem !important; }
 #magazine-list {
     display: grid;
@@ -14,25 +14,23 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; font-family: 
     border-radius: 8px;
     background: #f3f3f3;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    aspect-ratio: 3/4; /* Keeps grid aligned */
+    aspect-ratio: 3/4;
     overflow: hidden;
     transition: transform 0.2s ease;
 }
 .magazine-card:hover { transform: translateY(-5px); }
 .magazine-card img { width: 100%; height: 100%; object-fit: cover; }
 
-/* 2. Full-Screen 3D Modal */
+/* 2. 3D Engine Fix */
 #flipbook-view {
     position: fixed;
     inset: 0;
-    display: none; /* Controlled by JS */
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     background: rgba(0, 0, 0, 0.98);
     z-index: 9999;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
 }
 
 #flipbook-wrapper {
@@ -42,7 +40,7 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; font-family: 
     align-items: center;
     justify-content: center;
     padding: 20px;
-    /* FIX: Stops the book from being 'too big' */
+    /* FIX: Prevents book from overflowing screen height */
     max-height: 85vh; 
     overflow: visible !important; 
 }
@@ -50,13 +48,15 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; font-family: 
 #magazine { 
     width: 100%; height: 100%; margin: auto; 
     max-height: 100%; 
-    perspective: 3500px;
-    /* Lift the book toward the user to stop clipping */
-    transform: translateZ(100px);
-    -webkit-transform: translateZ(100px);
+    /* Increased perspective to flatten the 3D arc and prevent diving */
+    perspective: 4500px;
+    -webkit-perspective: 4500px;
+    /* Lift book off the background surface */
+    transform: translateZ(150px);
+    -webkit-transform: translateZ(150px);
+    overflow: visible !important;
 }
 
-/* Aspect Ratios for Desktop/Mobile */
 @media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
 @media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
 
@@ -64,18 +64,22 @@ body { background: #fff; -webkit-tap-highlight-color: transparent; font-family: 
     background: #fff; width: 100%; height: 100%; 
     overflow: visible !important; 
     position: relative;
+    /* Forces GPU to keep the flipping page on its own layer */
     transform-style: preserve-3d !important;
     backface-visibility: visible !important;
 }
 
 .page img { 
     width: 100%; height: 100%; object-fit: contain; display: block; 
-    transform: translateZ(5px);
+    /* Force Hardware Acceleration */
+    transform: translateZ(10px);
+    -webkit-transform: translateZ(10px);
     pointer-events: none;
 }
 
-/* UI Controls */
-#close-flipbook { cursor: pointer; transition: color 0.2s; }
-#close-flipbook:hover { color: white; }
+#btn-prev, #btn-next, #close-flipbook {
+    cursor: pointer !important;
+    z-index: 10001 !important;
+}
 
 body.no-scroll { overflow: hidden; }
